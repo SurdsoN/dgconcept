@@ -23,15 +23,12 @@ export const siteConfig = {
     soundcloud: "#",
   },
 
-  // TODO: replace with a real Formspree form ID (from https://formspree.io)
-  formspreeId: "YOUR_FORM_ID",
+  formspreeId: "xaeybnnj",
 
-  // TODO: replace with your real Calendly scheduling link
-  calendlyUrl: "https://calendly.com/dgconcept/consultation",
+  calendlyUrl: "https://calendly.com/omotoleronabanjo/30min",
 
-  // TODO: replace with your real Tawk.to property/widget IDs from tawk.to
-  tawkPropertyId: "",
-  tawkWidgetId: "",
+  tawkPropertyId: "6a9a2009dda389344be7fef1",
+  tawkWidgetId: "1k1l0q9ji",
 
   nav: [
     { label: "Home", href: "/" },

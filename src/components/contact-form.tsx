@@ -1,46 +1,16 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { useForm, ValidationError } from "@formspree/react";
+import { Send, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/site-config";
 
-type Status = "idle" | "submitting" | "success" | "error";
-
 export function ContactForm() {
-  const [status, setStatus] = useState<Status>("idle");
+  const [state, handleSubmit] = useForm(siteConfig.formspreeId);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus("submitting");
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    try {
-      const response = await fetch(
-        `https://formspree.io/f/${siteConfig.formspreeId}`,
-        {
-          method: "POST",
-          body: formData,
-          headers: { Accept: "application/json" },
-        },
-      );
-
-      if (response.ok) {
-        setStatus("success");
-        form.reset();
-      } else {
-        setStatus("error");
-      }
-    } catch {
-      setStatus("error");
-    }
-  }
-
-  if (status === "success") {
+  if (state.succeeded) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-surface-muted p-10 text-center">
         <CheckCircle2 className="h-8 w-8 text-brand" />
@@ -59,6 +29,12 @@ export function ContactForm() {
           Your Name
         </label>
         <Input id="name" name="name" placeholder="John Smith" required />
+        <ValidationError
+          prefix="Name"
+          field="name"
+          errors={state.errors}
+          className="mt-1.5 text-xs text-brand"
+        />
       </div>
       <div>
         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
@@ -71,6 +47,12 @@ export function ContactForm() {
           placeholder="john@example.com"
           required
         />
+        <ValidationError
+          prefix="Email"
+          field="email"
+          errors={state.errors}
+          className="mt-1.5 text-xs text-brand"
+        />
       </div>
       <div>
         <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-ink">
@@ -82,17 +64,21 @@ export function ContactForm() {
           placeholder="Tell me about your project..."
           required
         />
+        <ValidationError
+          prefix="Message"
+          field="message"
+          errors={state.errors}
+          className="mt-1.5 text-xs text-brand"
+        />
       </div>
 
-      {status === "error" && (
-        <p className="flex items-center gap-2 text-sm text-brand">
-          <AlertCircle className="h-4 w-4" />
-          Something went wrong. Please try again or email me directly.
-        </p>
-      )}
+      <ValidationError
+        errors={state.errors}
+        className="flex items-center gap-2 text-sm text-brand"
+      />
 
-      <Button type="submit" className="w-full" disabled={status === "submitting"}>
-        {status === "submitting" ? "Sending..." : "Send Message"}
+      <Button type="submit" className="w-full" disabled={state.submitting}>
+        {state.submitting ? "Sending..." : "Send Message"}
         <Send className="h-4 w-4" />
       </Button>
     </form>
