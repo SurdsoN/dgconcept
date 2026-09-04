@@ -21,14 +21,15 @@ export const siteConfig = {
 
   formspreeId: "xaeybnnj",
 
-  // Google reCAPTCHA v2 ("I'm not a robot" checkbox) site key. This is
-  // Google's public test key, which always passes and works everywhere —
-  // it does NOT actually block bots. Get your own free key at
-  // https://www.google.com/recaptcha/admin (register the site, choose
-  // reCAPTCHA v2 "Checkbox"), then paste the Secret Key into your Formspree
-  // form's Settings -> Verification -> reCAPTCHA, and replace this value
-  // with your real Site Key.
-  recaptchaSiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+  // Google reCAPTCHA v2 ("I'm not a robot" checkbox) site key. Registered
+  // at https://www.google.com/recaptcha/admin. This key only works on
+  // domains added to that registration (currently dgconcepthub.vercel.app)
+  // — add any other domain the site is served from (e.g. localhost, a
+  // custom domain, or a different .vercel.app URL) under that key's
+  // settings, or the widget will fail with a domain-mismatch error there.
+  // The matching Secret Key belongs in Formspree's form Settings ->
+  // Verification -> reCAPTCHA, never in this repo.
+  recaptchaSiteKey: "6LdfzKgtAAAAAKQZ68A3uzCsc8N6Y3hiO_jL2Q61",
 
   calendlyUrl: "https://calendly.com/omotoleronabanjo/30min",
 
