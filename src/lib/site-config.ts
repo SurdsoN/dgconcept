@@ -9,10 +9,9 @@ export const siteConfig = {
   description:
     "DgConcept is led by Omo Tola, a professional web architect with long-term, impactful experience in website design and development. We build fast, clean, conversion-focused websites and Shopify stores for founders and businesses worldwide.",
 
-  // TODO: replace with real contact details
-  email: "hello@dgconcept.co",
-  phone: "+1 (000) 000-0000",
-  whatsappNumber: "10000000000", // digits only, no +, no spaces
+  email: "omotoleronabanjo@gmail.com",
+  phone: "+1 (548) 870-4163",
+  whatsappNumber: "15488704163", // digits only, no +, no spaces
   location: "Worldwide (Remote)",
 
   // TODO: replace with real profile URLs
