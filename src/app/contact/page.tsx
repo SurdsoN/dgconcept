@@ -60,18 +60,24 @@ export default function ContactPage() {
               <ul className="mt-5 space-y-4 text-sm">
                 <li className="flex items-start gap-3">
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs uppercase tracking-wide text-muted">Email</p>
-                    <a href={`mailto:${siteConfig.email}`} className="font-medium text-ink">
+                    <a
+                      href={`mailto:${siteConfig.email}`}
+                      className="break-words font-medium text-ink"
+                    >
                       {siteConfig.email}
                     </a>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs uppercase tracking-wide text-muted">Phone</p>
-                    <a href={`tel:${siteConfig.phone}`} className="font-medium text-ink">
+                    <a
+                      href={`tel:${siteConfig.phone}`}
+                      className="break-words font-medium text-ink"
+                    >
                       {siteConfig.phone}
                     </a>
                   </div>

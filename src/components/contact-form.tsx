@@ -23,6 +23,19 @@ export function ContactForm() {
     ? (new URLSearchParams(window.location.search).get("url") ?? "")
     : "";
 
+  // reCAPTCHA's "normal" size renders a fixed 304px-wide widget, which
+  // overflows the card on phone-width screens — switch to "compact" below
+  // the breakpoint where it no longer fits.
+  const recaptchaSize = useSyncExternalStore<"compact" | "normal">(
+    (onChange) => {
+      const mql = window.matchMedia("(max-width: 400px)");
+      mql.addEventListener("change", onChange);
+      return () => mql.removeEventListener("change", onChange);
+    },
+    () => (window.matchMedia("(max-width: 400px)").matches ? "compact" : "normal"),
+    () => "normal",
+  );
+
   if (state.succeeded) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-surface-muted p-10 text-center">
@@ -111,12 +124,16 @@ export function ContactForm() {
         />
       </div>
 
-      <ReCAPTCHA
-        ref={recaptchaRef}
-        sitekey={siteConfig.recaptchaSiteKey}
-        onChange={(token) => setVerified(!!token)}
-        onExpired={() => setVerified(false)}
-      />
+      <div className="flex justify-center sm:justify-start">
+        <ReCAPTCHA
+          key={recaptchaSize}
+          ref={recaptchaRef}
+          sitekey={siteConfig.recaptchaSiteKey}
+          size={recaptchaSize}
+          onChange={(token) => setVerified(!!token)}
+          onExpired={() => setVerified(false)}
+        />
+      </div>
 
       <ValidationError
         errors={state.errors}
