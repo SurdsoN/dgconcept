@@ -104,9 +104,17 @@ export function WebsiteAuditTool() {
       )}
 
       {status === "error" && (
-        <div className="mt-6 flex items-start gap-2 rounded-lg bg-brand-50 p-4 text-sm text-brand">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-          <p>{error}</p>
+        <div className="mt-6 rounded-lg bg-brand-50 p-4 text-sm text-brand">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{error}</p>
+          </div>
+          <Link
+            href={`/contact?url=${encodeURIComponent(url)}`}
+            className="mt-2 inline-block font-medium underline underline-offset-2"
+          >
+            Contact me for a manual audit instead →
+          </Link>
         </div>
       )}
 

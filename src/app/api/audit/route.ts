@@ -22,7 +22,10 @@ type PsiResponse = {
     categories?: Record<string, { score: number | null }>;
     audits?: Record<string, LighthouseAudit>;
   };
-  error?: { message?: string };
+  error?: {
+    message?: string;
+    errors?: { reason?: string; message?: string }[];
+  };
 };
 
 export async function POST(request: Request) {
@@ -63,16 +66,38 @@ export async function POST(request: Request) {
     psi = await res.json();
 
     if (!res.ok) {
-      const friendlyError =
-        res.status === 429
-          ? "This tool is getting a lot of use right now — please try again in a minute."
-          : (psi.error?.message ??
-            "Couldn't reach that site right now. Double-check the URL and try again.");
+      const reason = psi.error?.errors?.[0]?.reason;
+
+      console.error("[audit] PageSpeed Insights error", {
+        url: targetUrl,
+        status: res.status,
+        reason,
+        message: psi.error?.message,
+      });
+
+      let friendlyError: string;
+      if (res.status === 429) {
+        friendlyError = "This tool is getting a lot of use right now — please try again in a minute.";
+      } else if (reason === "lighthouseError") {
+        friendlyError =
+          "Google's audit tool couldn't load this site — it may be blocking automated visits (common with some Shopify security apps or firewalls). Try a different page on the same site, or reach out and I'll take a manual look.";
+      } else {
+        friendlyError =
+          psi.error?.message ??
+          "Couldn't reach that site right now. Double-check the URL and try again.";
+      }
 
       return NextResponse.json({ error: friendlyError }, { status: 502 });
     }
   } catch (err) {
     const timedOut = err instanceof Error && err.name === "AbortError";
+
+    console.error("[audit] Request failed", {
+      url: targetUrl,
+      timedOut,
+      error: err instanceof Error ? err.message : String(err),
+    });
+
     return NextResponse.json(
       {
         error: timedOut
