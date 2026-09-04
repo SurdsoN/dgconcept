@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Send, CheckCircle2 } from "lucide-react";
@@ -13,6 +13,15 @@ export function ContactForm() {
   const [state, handleSubmit] = useForm(siteConfig.formspreeId);
   const [verified, setVerified] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const websitePrefill = mounted
+    ? (new URLSearchParams(window.location.search).get("url") ?? "")
+    : "";
 
   if (state.succeeded) {
     return (
@@ -70,10 +79,12 @@ export function ContactForm() {
           Website URL <span className="font-normal text-muted">(optional)</span>
         </label>
         <Input
+          key={mounted ? "prefilled" : "empty"}
           id="website"
           name="website"
           type="url"
           placeholder="https://yourstore.com"
+          defaultValue={websitePrefill}
         />
         <ValidationError
           prefix="Website"

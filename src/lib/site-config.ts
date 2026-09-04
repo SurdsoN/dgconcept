@@ -55,6 +55,7 @@ export const siteConfig = {
       { label: "About Us", href: "/about" },
     ],
     tools: [
+      { label: "Free Website Audit", href: "/audit" },
       { label: "ROI Calculator", href: "/roi-calculator" },
       { label: "Reviews", href: "/#testimonials" },
       { label: "FAQ", href: "/#faq" },

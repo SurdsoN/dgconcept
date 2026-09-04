@@ -205,13 +205,13 @@ export default function Home() {
               Get a Free Website Audit
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm text-muted">
-              Send me your website or Shopify store link and I&apos;ll send back
-              a short breakdown of issues, revenue leaks, and quick-win
-              opportunities — no cost, no obligation.
+              Paste your website or Shopify store URL and get a real, live
+              Lighthouse-powered breakdown of speed, SEO, and mobile-usability
+              issues — instantly, no waiting on an email.
             </p>
             <div className="mt-6 flex justify-center">
               <Button asChild size="lg">
-                <Link href="/contact">Request My Free Audit</Link>
+                <Link href="/audit">Run My Free Audit</Link>
               </Button>
             </div>
           </Card>
