@@ -12,6 +12,7 @@ import {
   XCircle,
   Mail,
   Phone,
+  Gauge,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,11 +23,13 @@ import {
   scoreColor,
   scorePercent,
   type AuditCategory,
-  type AuditResult,
+  type FastAuditResult,
+  type SpeedAuditResult,
 } from "@/lib/audit";
 import type { CheckStatus } from "@/lib/onpage-seo";
 
-type Status = "idle" | "loading" | "error" | "success";
+type FastStatus = "idle" | "loading" | "error" | "success";
+type SpeedStatus = "idle" | "loading" | "error" | "success";
 
 const CATEGORY_ORDER: AuditCategory[] = [
   "performance",
@@ -94,20 +97,28 @@ function ChecklistSection({
 
 export function WebsiteAuditTool() {
   const [url, setUrl] = useState("");
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
-  const [result, setResult] = useState<AuditResult | null>(null);
+
+  const [fastStatus, setFastStatus] = useState<FastStatus>("idle");
+  const [fastError, setFastError] = useState("");
+  const [fastResult, setFastResult] = useState<FastAuditResult | null>(null);
+
+  const [speedStatus, setSpeedStatus] = useState<SpeedStatus>("idle");
+  const [speedError, setSpeedError] = useState("");
+  const [speedResult, setSpeedResult] = useState<SpeedAuditResult | null>(null);
 
   const issuesByCategory = useMemo(() => {
-    if (!result) return {};
-    return result.issues.reduce<Record<string, typeof result.issues>>((acc, issue) => {
-      (acc[issue.category] ??= []).push(issue);
-      return acc;
-    }, {});
-  }, [result]);
+    if (!speedResult) return {};
+    return speedResult.issues.reduce<Record<string, typeof speedResult.issues>>(
+      (acc, issue) => {
+        (acc[issue.category] ??= []).push(issue);
+        return acc;
+      },
+      {},
+    );
+  }, [speedResult]);
 
   const crawlItems = useMemo<ChecklistItem[] | null>(() => {
-    const scan = result?.siteScan;
+    const scan = fastResult?.siteScan;
     if (!scan) return null;
     const items: ChecklistItem[] = [];
 
@@ -149,10 +160,10 @@ export function WebsiteAuditTool() {
     });
 
     return items;
-  }, [result]);
+  }, [fastResult]);
 
   const headerItems = useMemo<ChecklistItem[] | null>(() => {
-    const header = result?.siteScan?.header;
+    const header = fastResult?.siteScan?.header;
     if (!header) return null;
     return [
       {
@@ -189,10 +200,10 @@ export function WebsiteAuditTool() {
         detail: header.accountDetected ? "Detected." : "Not confidently detected.",
       },
     ];
-  }, [result]);
+  }, [fastResult]);
 
   const policyItems = useMemo<ChecklistItem[] | null>(() => {
-    const policies = result?.siteScan?.policies;
+    const policies = fastResult?.siteScan?.policies;
     if (!policies || policies.length === 0) return null;
     return policies.map((p) => ({
       id: p.label,
@@ -200,10 +211,10 @@ export function WebsiteAuditTool() {
       status: !p.found ? "bad" : p.thin ? "warning" : "good",
       detail: !p.found ? "Not found." : p.thin ? "Found, but content looks very thin." : "Found.",
     }));
-  }, [result]);
+  }, [fastResult]);
 
   const appItems = useMemo<ChecklistItem[] | null>(() => {
-    const shopify = result?.siteScan?.shopify;
+    const shopify = fastResult?.siteScan?.shopify;
     if (!shopify) return null;
     const items: ChecklistItem[] = [
       {
@@ -233,15 +244,18 @@ export function WebsiteAuditTool() {
       });
     }
     return items;
-  }, [result]);
+  }, [fastResult]);
 
-  async function runAudit(e: FormEvent<HTMLFormElement>) {
+  async function runFastAudit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!url.trim()) return;
 
-    setStatus("loading");
-    setError("");
-    setResult(null);
+    setFastStatus("loading");
+    setFastError("");
+    setFastResult(null);
+    setSpeedStatus("idle");
+    setSpeedError("");
+    setSpeedResult(null);
 
     try {
       const res = await fetch("/api/audit", {
@@ -252,22 +266,50 @@ export function WebsiteAuditTool() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong. Please try again.");
-        setStatus("error");
+        setFastError(data.error ?? "Something went wrong. Please try again.");
+        setFastStatus("error");
         return;
       }
 
-      setResult(data);
-      setStatus("success");
+      setFastResult(data);
+      setFastStatus("success");
     } catch {
-      setError("Something went wrong. Please try again.");
-      setStatus("error");
+      setFastError("Something went wrong. Please try again.");
+      setFastStatus("error");
+    }
+  }
+
+  async function runSpeedAudit() {
+    if (!fastResult) return;
+
+    setSpeedStatus("loading");
+    setSpeedError("");
+
+    try {
+      const res = await fetch("/api/audit/speed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: fastResult.finalUrl }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSpeedError(data.error ?? "Something went wrong. Please try again.");
+        setSpeedStatus("error");
+        return;
+      }
+
+      setSpeedResult(data);
+      setSpeedStatus("success");
+    } catch {
+      setSpeedError("Something went wrong. Please try again.");
+      setSpeedStatus("error");
     }
   }
 
   return (
     <Card className="mx-auto max-w-3xl p-6 sm:p-10">
-      <form onSubmit={runAudit} className="flex flex-col gap-3 sm:flex-row">
+      <form onSubmit={runFastAudit} className="flex flex-col gap-3 sm:flex-row">
         <Input
           type="text"
           placeholder="yourstore.com"
@@ -276,27 +318,27 @@ export function WebsiteAuditTool() {
           className="flex-1"
           required
         />
-        <Button type="submit" disabled={status === "loading"}>
-          {status === "loading" ? (
+        <Button type="submit" disabled={fastStatus === "loading"}>
+          {fastStatus === "loading" ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Search className="h-4 w-4" />
           )}
-          {status === "loading" ? "Running Audit..." : "Run Free Audit"}
+          {fastStatus === "loading" ? "Scanning..." : "Run Free Audit"}
         </Button>
       </form>
 
-      {status === "loading" && (
+      {fastStatus === "loading" && (
         <p className="mt-4 text-center text-sm text-muted">
-          Running a real Lighthouse audit on your site — this can take up to 90 seconds.
+          Scanning your site — this only takes a few seconds.
         </p>
       )}
 
-      {status === "error" && (
+      {fastStatus === "error" && (
         <div className="mt-6 rounded-lg bg-brand-50 p-4 text-sm text-brand">
           <div className="flex items-start gap-2">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-            <p>{error}</p>
+            <p>{fastError}</p>
           </div>
           <Link
             href={`/contact?url=${encodeURIComponent(url)}`}
@@ -307,56 +349,98 @@ export function WebsiteAuditTool() {
         </div>
       )}
 
-      {status === "success" && result && (
+      {fastStatus === "success" && fastResult && (
         <div className="mt-8">
           <p className="text-center text-xs text-muted">
-            Results for <span className="font-medium text-ink">{result.finalUrl}</span>
+            Results for <span className="font-medium text-ink">{fastResult.finalUrl}</span>
           </p>
 
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <ScoreCard label="Speed" score={result.scores.performance} />
-            <ScoreCard label="SEO" score={result.scores.seo} />
-            <ScoreCard label="Accessibility" score={result.scores.accessibility} />
-            <ScoreCard label="Best Practices" score={result.scores.bestPractices} />
-          </div>
-
-          {result.issues.length === 0 ? (
-            <div className="mt-6 flex flex-col items-center gap-2 rounded-xl border border-border bg-surface-muted p-8 text-center">
-              <PartyPopper className="h-6 w-6 text-brand" />
-              <p className="font-semibold text-ink">
-                Nice — no major issues found in the areas we checked.
-              </p>
-              <p className="text-sm text-muted">
-                Want a second opinion or help squeezing out more performance?
-              </p>
-            </div>
-          ) : (
-            <div className="mt-6 space-y-4">
-              {CATEGORY_ORDER.filter((c) => issuesByCategory[c]?.length).map((category) => (
-                <div key={category} className="rounded-xl border border-border p-4">
+          {/* Speed / Lighthouse section — opt-in, since it's the slow part */}
+          <div className="mt-6 rounded-xl border border-border p-4">
+            {speedStatus === "idle" && (
+              <div className="flex flex-col items-center gap-3 py-2 text-center">
+                <Gauge className="h-6 w-6 text-brand" />
+                <div>
                   <p className="text-sm font-semibold text-ink">
-                    {CATEGORY_LABELS[category]}
+                    Want real Speed & Lighthouse scores?
                   </p>
-                  <ul className="mt-2 space-y-1.5">
-                    {issuesByCategory[category]!.map((issue) => (
-                      <li
-                        key={issue.id}
-                        className="flex items-start gap-2 text-sm text-muted"
-                      >
-                        <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
-                        {issue.title}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="mt-1 text-xs text-muted">
+                    Runs a full Google Lighthouse audit — takes up to 90 seconds.
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
+                <Button onClick={runSpeedAudit} variant="outline">
+                  Run Full Speed Audit
+                </Button>
+              </div>
+            )}
+
+            {speedStatus === "loading" && (
+              <div className="flex flex-col items-center gap-2 py-4 text-center">
+                <Loader2 className="h-5 w-5 animate-spin text-brand" />
+                <p className="text-sm text-muted">
+                  Running a real Lighthouse audit — this can take up to 90 seconds.
+                </p>
+              </div>
+            )}
+
+            {speedStatus === "error" && (
+              <div className="text-center">
+                <p className="flex items-center justify-center gap-2 text-sm text-brand">
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                  {speedError}
+                </p>
+                <Button onClick={runSpeedAudit} variant="outline" className="mt-3">
+                  Try Again
+                </Button>
+              </div>
+            )}
+
+            {speedStatus === "success" && speedResult && (
+              <>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <ScoreCard label="Speed" score={speedResult.scores.performance} />
+                  <ScoreCard label="SEO" score={speedResult.scores.seo} />
+                  <ScoreCard label="Accessibility" score={speedResult.scores.accessibility} />
+                  <ScoreCard label="Best Practices" score={speedResult.scores.bestPractices} />
+                </div>
+
+                {speedResult.issues.length === 0 ? (
+                  <div className="mt-4 flex flex-col items-center gap-2 rounded-xl bg-surface-muted p-6 text-center">
+                    <PartyPopper className="h-5 w-5 text-brand" />
+                    <p className="text-sm font-semibold text-ink">
+                      No major speed issues found.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-4 space-y-4">
+                    {CATEGORY_ORDER.filter((c) => issuesByCategory[c]?.length).map((category) => (
+                      <div key={category}>
+                        <p className="text-sm font-semibold text-ink">
+                          {CATEGORY_LABELS[category]}
+                        </p>
+                        <ul className="mt-2 space-y-1.5">
+                          {issuesByCategory[category]!.map((issue) => (
+                            <li
+                              key={issue.id}
+                              className="flex items-start gap-2 text-sm text-muted"
+                            >
+                              <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
+                              {issue.title}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
 
           <ChecklistSection
             title="On-Page SEO"
-            items={result.onPage?.checks ?? null}
-            emptyMessage="Couldn't check this site's on-page SEO directly — it may be blocking automated requests. The scores above are still accurate."
+            items={fastResult.onPage?.checks ?? null}
+            emptyMessage="Couldn't check this site's on-page SEO directly — it may be blocking automated requests."
           />
 
           <ChecklistSection
@@ -383,43 +467,34 @@ export function WebsiteAuditTool() {
             emptyMessage="Couldn't detect platform or app signals directly."
           />
 
-          {result.siteScan?.contact && (
-            <div className="mt-6 rounded-xl border border-border p-4">
-              <p className="text-sm font-semibold text-ink">Public Contact Info Found</p>
-              {result.siteScan.contact.emails.length === 0 &&
-              result.siteScan.contact.phones.length === 0 ? (
-                <p className="mt-2 text-sm text-muted">
-                  No public email or phone number found on the homepage or policy pages.
-                </p>
-              ) : (
-                <ul className="mt-2 space-y-1.5">
-                  {result.siteScan.contact.emails.map((e) => (
-                    <li
-                      key={e.address}
-                      className="flex items-center gap-2 text-sm text-muted"
-                    >
-                      <Mail className="h-3.5 w-3.5 shrink-0 text-brand" />
-                      {e.address}{" "}
-                      <span className="text-xs">(via {e.source})</span>
-                    </li>
-                  ))}
-                  {result.siteScan.contact.phones.map((p) => (
-                    <li
-                      key={p.number}
-                      className="flex items-center gap-2 text-sm text-muted"
-                    >
-                      <Phone className="h-3.5 w-3.5 shrink-0 text-brand" />
-                      {p.number} <span className="text-xs">(via {p.source})</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
+          <div className="mt-6 rounded-xl border border-border p-4">
+            <p className="text-sm font-semibold text-ink">Public Contact Info Found</p>
+            {fastResult.siteScan.contact.emails.length === 0 &&
+            fastResult.siteScan.contact.phones.length === 0 ? (
+              <p className="mt-2 text-sm text-muted">
+                No public email or phone number found on the homepage or policy pages.
+              </p>
+            ) : (
+              <ul className="mt-2 space-y-1.5">
+                {fastResult.siteScan.contact.emails.map((e) => (
+                  <li key={e.address} className="flex items-center gap-2 text-sm text-muted">
+                    <Mail className="h-3.5 w-3.5 shrink-0 text-brand" />
+                    {e.address} <span className="text-xs">(via {e.source})</span>
+                  </li>
+                ))}
+                {fastResult.siteScan.contact.phones.map((p) => (
+                  <li key={p.number} className="flex items-center gap-2 text-sm text-muted">
+                    <Phone className="h-3.5 w-3.5 shrink-0 text-brand" />
+                    {p.number} <span className="text-xs">(via {p.source})</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button asChild size="lg">
-              <Link href={`/contact?url=${encodeURIComponent(result.requestedUrl)}`}>
+              <Link href={`/contact?url=${encodeURIComponent(fastResult.requestedUrl)}`}>
                 Let&apos;s Fix These Issues →
               </Link>
             </Button>

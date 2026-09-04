@@ -17,13 +17,21 @@ export type AuditIssue = {
   score: number;
 };
 
-export type AuditResult = {
+// Returned instantly by /api/audit — no PageSpeed Insights call, just the
+// homepage/robots/sitemap/policy-page fetches, which typically finish in a
+// few seconds.
+export type FastAuditResult = {
   requestedUrl: string;
   finalUrl: string;
+  onPage: OnPageSeoResult | null;
+  siteScan: SiteScanResult;
+};
+
+// Returned by the separate, opt-in /api/audit/speed call, which can take
+// 30-90+ seconds since it runs a real Google Lighthouse audit.
+export type SpeedAuditResult = {
   scores: AuditScores;
   issues: AuditIssue[];
-  onPage: OnPageSeoResult | null;
-  siteScan: SiteScanResult | null;
 };
 
 export const CATEGORY_LABELS: Record<AuditCategory, string> = {

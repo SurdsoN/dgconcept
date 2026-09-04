@@ -62,20 +62,26 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
 - **Forms:** Formspree + Google reCAPTCHA v2
 - **Scheduling:** Calendly popup widget
 - **Live chat:** Tawk.to
-- **Free Website Audit:** `/audit` page + `/api/audit` route, calls Google's
-  PageSpeed Insights API server-side for real speed/SEO/accessibility scores,
-  plus a full site scan built with cheerio (no paid SEO API): on-page SEO
-  (title, meta description, headings, image alt text, canonical tag, Open
-  Graph tags, indexability, content length), robots.txt + sitemap analysis
-  (including AI crawler declarations), header/navigation detection (logo,
-  nav links, search/cart/account), store policy pages (privacy/refund/
-  shipping/terms/contact — found vs. thin content), public contact info
-  (emails/phones), and Shopify platform + installed-app detection. Sites
-  with bot protection will block the direct HTML fetch (their Lighthouse
-  scores still work fine either way, since that's Google's own browser
-  doing the loading) — the UI shows a plain "couldn't check this site
-  directly" message per section when that happens rather than failing the
-  whole audit. See `src/lib/*-scan.ts` for each scanner.
+- **Free Website Audit:** `/audit` page, split into two independent calls so
+  the common case is instant:
+  - `/api/audit` (a few seconds) — a full site scan built with cheerio (no
+    paid SEO API): on-page SEO (title, meta description, headings, image
+    alt text, canonical tag, Open Graph tags, indexability, content
+    length), robots.txt + sitemap analysis (including AI crawler
+    declarations), header/navigation detection (logo, nav links, search/
+    cart/account), store policy pages (privacy/refund/shipping/terms/
+    contact — found vs. thin content), public contact info (emails/
+    phones), and Shopify platform + installed-app detection.
+  - `/api/audit/speed` (30-90s, opt-in via a button in the results) — calls
+    Google's PageSpeed Insights API server-side for real Lighthouse speed/
+    SEO/accessibility/best-practices scores.
+
+  Sites with bot protection will block the direct HTML fetch that
+  `/api/audit` needs (Lighthouse scores from `/api/audit/speed` still work
+  fine either way, since that's Google's own browser doing the loading) —
+  the UI shows a plain "couldn't check this site directly" message per
+  section when that happens rather than failing the whole audit. See
+  `src/lib/*-scan.ts` for each scanner.
 - **Hosting:** Vercel (free tier) — connect this repo at
   [vercel.com/new](https://vercel.com/new) for automatic deploys on push
 

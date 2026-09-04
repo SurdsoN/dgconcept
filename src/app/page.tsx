@@ -205,9 +205,10 @@ export default function Home() {
               Get a Free Website Audit
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm text-muted">
-              Paste your website or Shopify store URL and get a real, live
-              Lighthouse-powered breakdown of speed, SEO, and mobile-usability
-              issues — instantly, no waiting on an email.
+              Paste your website or Shopify store URL and get an instant
+              scan of your on-page SEO, crawlability, store policies, and
+              more — plus an optional full Lighthouse speed check, no
+              waiting on an email.
             </p>
             <div className="mt-6 flex justify-center">
               <Button asChild size="lg">

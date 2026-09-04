@@ -5,7 +5,7 @@ import { WebsiteAuditTool } from "@/components/website-audit-tool";
 export const metadata: Metadata = {
   title: "Free Website Audit",
   description:
-    "Get a real Lighthouse-powered audit of your website or Shopify store — speed, SEO, accessibility, and on-page SEO checks, no signup required.",
+    "Get an instant on-page SEO, crawlability, and store health scan of your website or Shopify store — plus an optional full Google Lighthouse speed audit. No signup required.",
 };
 
 export default function AuditPage() {
@@ -20,11 +20,11 @@ export default function AuditPage() {
             Free Website <span className="text-brand">Audit</span>
           </h1>
           <p className="mt-4 text-base text-muted">
-            Paste your website or Shopify store URL below for a real audit —
-            speed, SEO, and mobile-friendliness checks powered by
-            Google&apos;s own PageSpeed Insights, plus an on-page SEO
-            breakdown (title tags, headings, image alt text, and more). No
-            signup, no waiting on an email.
+            Paste your website or Shopify store URL for an instant scan —
+            on-page SEO, crawlability, navigation, store policies, contact
+            info, and installed apps, all in a few seconds. Want real Speed
+            and Lighthouse scores too? Run that separately, right from the
+            results. No signup, no waiting on an email.
           </p>
         </div>
 
