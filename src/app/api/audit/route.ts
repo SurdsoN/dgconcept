@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import * as cheerio from "cheerio";
+import type { CheerioAPI } from "cheerio";
 import {
   CURATED_AUDITS,
   normalizeUrl,
@@ -6,29 +8,28 @@ import {
   type AuditResult,
 } from "@/lib/audit";
 import { analyzeOnPageSeo, type OnPageSeoResult } from "@/lib/onpage-seo";
+import { runSiteScan, type SiteScanResult } from "@/lib/site-scan";
 
 export const runtime = "nodejs";
 export const maxDuration = 90;
 
 const PSI_ENDPOINT = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed";
 
-async function fetchOnPageSeo(url: string): Promise<OnPageSeoResult | null> {
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+};
+
+async function fetchHomepage(url: string): Promise<{ html: string; $: CheerioAPI } | null> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
 
   try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
-    });
+    const res = await fetch(url, { signal: controller.signal, headers: BROWSER_HEADERS });
     if (!res.ok) {
-      console.error("[audit] On-page fetch got non-OK response", {
+      console.error("[audit] Homepage fetch got non-OK response", {
         url,
         status: res.status,
         statusText: res.statusText,
@@ -37,9 +38,9 @@ async function fetchOnPageSeo(url: string): Promise<OnPageSeoResult | null> {
     }
 
     const html = await res.text();
-    return analyzeOnPageSeo(html);
+    return { html, $: cheerio.load(html) };
   } catch (err) {
-    console.error("[audit] On-page fetch failed", {
+    console.error("[audit] Homepage fetch failed", {
       url,
       error: err instanceof Error ? err.message : String(err),
     });
@@ -85,7 +86,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "That doesn't look like a valid URL." }, { status: 400 });
   }
 
-  const onPagePromise = fetchOnPageSeo(targetUrl);
+  // Fetch the homepage once and reuse it across on-page SEO, header/nav, and
+  // Shopify/app detection, then kick off the independent robots.txt /
+  // sitemap / policy-page scans — all running in parallel with the (much
+  // slower) PageSpeed Insights call below.
+  const homepagePromise = fetchHomepage(targetUrl);
+  const onPageAndScanPromise: Promise<{
+    onPage: OnPageSeoResult | null;
+    siteScan: SiteScanResult;
+  }> = homepagePromise.then(async (homepage) => {
+    const onPage = homepage ? analyzeOnPageSeo(homepage.$) : null;
+    const siteScan = await runSiteScan(targetUrl, homepage);
+    return { onPage, siteScan };
+  });
 
   const params = new URLSearchParams({ url: targetUrl, strategy: "mobile" });
   ["performance", "seo", "accessibility", "best-practices"].forEach((c) =>
@@ -169,7 +182,7 @@ export async function POST(request: Request) {
     return acc;
   }, []).sort((a, b) => a.score - b.score);
 
-  const onPage = await onPagePromise;
+  const { onPage, siteScan } = await onPageAndScanPromise;
 
   const result: AuditResult = {
     requestedUrl: targetUrl,
@@ -182,6 +195,7 @@ export async function POST(request: Request) {
     },
     issues: issues.slice(0, 10),
     onPage,
+    siteScan,
   };
 
   return NextResponse.json(result);

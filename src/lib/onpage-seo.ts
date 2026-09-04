@@ -1,4 +1,4 @@
-import * as cheerio from "cheerio";
+import type { CheerioAPI } from "cheerio";
 
 export type CheckStatus = "good" | "warning" | "bad";
 
@@ -13,12 +13,11 @@ export type OnPageSeoResult = {
   checks: OnPageCheck[];
 };
 
-function collapseWhitespace(text: string): string {
+export function collapseWhitespace(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
-export function analyzeOnPageSeo(html: string): OnPageSeoResult {
-  const $ = cheerio.load(html);
+export function analyzeOnPageSeo($: CheerioAPI): OnPageSeoResult {
   const checks: OnPageCheck[] = [];
 
   // Title tag
@@ -99,16 +98,43 @@ export function analyzeOnPageSeo(html: string): OnPageSeoResult {
     });
   }
 
-  // Heading structure (H2s)
+  // Heading structure (H2-H4)
   const h2Count = $("h2").length;
+  const h3Count = $("h3").length;
+  const h4Count = $("h4").length;
   checks.push({
-    id: "h2",
-    label: "Subheadings (H2)",
+    id: "heading-structure",
+    label: "Heading Structure",
     status: h2Count === 0 ? "warning" : "good",
     detail:
       h2Count === 0
         ? "No H2 subheadings found — they help organize content for readers and search engines."
-        : `${h2Count} H2 subheading${h2Count === 1 ? "" : "s"} found.`,
+        : `H2: ${h2Count}, H3: ${h3Count}, H4: ${h4Count} — content is organized into subsections.`,
+  });
+
+  // Paragraphs and lists
+  const paragraphCount = $("p").length;
+  const listCount = $("ul, ol").length;
+  checks.push({
+    id: "content-structure",
+    label: "Paragraphs & Lists",
+    status: paragraphCount === 0 ? "warning" : "good",
+    detail:
+      paragraphCount === 0
+        ? "No paragraph tags found — content may not be marked up semantically."
+        : `${paragraphCount} paragraph${paragraphCount === 1 ? "" : "s"}, ${listCount} list${listCount === 1 ? "" : "s"}.`,
+  });
+
+  // Structured data (JSON-LD)
+  const jsonLdCount = $('script[type="application/ld+json"]').length;
+  checks.push({
+    id: "structured-data",
+    label: "Structured Data (JSON-LD)",
+    status: jsonLdCount === 0 ? "warning" : "good",
+    detail:
+      jsonLdCount === 0
+        ? "None found — structured data helps search engines show rich results (ratings, prices, breadcrumbs)."
+        : `${jsonLdCount} JSON-LD block${jsonLdCount === 1 ? "" : "s"} found.`,
   });
 
   // Image alt text
@@ -179,9 +205,10 @@ export function analyzeOnPageSeo(html: string): OnPageSeoResult {
     });
   }
 
-  // Word count (rough estimate from visible body text)
-  $("script, style, noscript").remove();
-  const bodyText = collapseWhitespace($("body").text());
+  // Word count (rough estimate from visible body text, without mutating the shared DOM)
+  const bodyClone = $("body").clone();
+  bodyClone.find("script, style, noscript").remove();
+  const bodyText = collapseWhitespace(bodyClone.text());
   const wordCount = bodyText ? bodyText.split(" ").length : 0;
   checks.push({
     id: "word-count",

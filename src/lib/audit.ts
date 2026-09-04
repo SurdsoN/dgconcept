@@ -1,4 +1,5 @@
 import type { OnPageSeoResult } from "./onpage-seo";
+import type { SiteScanResult } from "./site-scan";
 
 export type AuditCategory = "performance" | "seo" | "accessibility" | "best-practices";
 
@@ -22,6 +23,7 @@ export type AuditResult = {
   scores: AuditScores;
   issues: AuditIssue[];
   onPage: OnPageSeoResult | null;
+  siteScan: SiteScanResult | null;
 };
 
 export const CATEGORY_LABELS: Record<AuditCategory, string> = {
