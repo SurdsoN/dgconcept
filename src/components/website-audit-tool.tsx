@@ -80,7 +80,7 @@ function ChecklistSection({
             return (
               <li key={item.id} className="flex items-start gap-2 text-sm">
                 <Icon className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${STATUS_COLOR[item.status]}`} />
-                <span>
+                <span className="min-w-0 break-words">
                   <span className="font-medium text-ink">{item.label}:</span>{" "}
                   <span className="text-muted">{item.detail}</span>
                 </span>
@@ -351,7 +351,7 @@ export function WebsiteAuditTool() {
 
       {fastStatus === "success" && fastResult && (
         <div className="mt-8">
-          <p className="text-center text-xs text-muted">
+          <p className="break-words text-center text-xs text-muted">
             Results for <span className="font-medium text-ink">{fastResult.finalUrl}</span>
           </p>
 
@@ -477,15 +477,19 @@ export function WebsiteAuditTool() {
             ) : (
               <ul className="mt-2 space-y-1.5">
                 {fastResult.siteScan.contact.emails.map((e) => (
-                  <li key={e.address} className="flex items-center gap-2 text-sm text-muted">
-                    <Mail className="h-3.5 w-3.5 shrink-0 text-brand" />
-                    {e.address} <span className="text-xs">(via {e.source})</span>
+                  <li key={e.address} className="flex items-start gap-2 text-sm text-muted">
+                    <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
+                    <span className="min-w-0 break-words">
+                      {e.address} <span className="text-xs">(via {e.source})</span>
+                    </span>
                   </li>
                 ))}
                 {fastResult.siteScan.contact.phones.map((p) => (
-                  <li key={p.number} className="flex items-center gap-2 text-sm text-muted">
-                    <Phone className="h-3.5 w-3.5 shrink-0 text-brand" />
-                    {p.number} <span className="text-xs">(via {p.source})</span>
+                  <li key={p.number} className="flex items-start gap-2 text-sm text-muted">
+                    <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
+                    <span className="min-w-0 break-words">
+                      {p.number} <span className="text-xs">(via {p.source})</span>
+                    </span>
                   </li>
                 ))}
               </ul>
