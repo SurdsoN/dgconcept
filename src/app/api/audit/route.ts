@@ -5,11 +5,49 @@ import {
   type AuditIssue,
   type AuditResult,
 } from "@/lib/audit";
+import { analyzeOnPageSeo, type OnPageSeoResult } from "@/lib/onpage-seo";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 const PSI_ENDPOINT = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed";
+
+async function fetchOnPageSeo(url: string): Promise<OnPageSeoResult | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15_000);
+
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    if (!res.ok) {
+      console.error("[audit] On-page fetch got non-OK response", {
+        url,
+        status: res.status,
+        statusText: res.statusText,
+      });
+      return null;
+    }
+
+    const html = await res.text();
+    return analyzeOnPageSeo(html);
+  } catch (err) {
+    console.error("[audit] On-page fetch failed", {
+      url,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 type LighthouseAudit = {
   score: number | null;
@@ -47,6 +85,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "That doesn't look like a valid URL." }, { status: 400 });
   }
 
+  const onPagePromise = fetchOnPageSeo(targetUrl);
+
   const params = new URLSearchParams({ url: targetUrl, strategy: "mobile" });
   ["performance", "seo", "accessibility", "best-practices"].forEach((c) =>
     params.append("category", c),
@@ -56,7 +96,7 @@ export async function POST(request: Request) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 55_000);
+  const timeout = setTimeout(() => controller.abort(), 85_000);
 
   let psi: PsiResponse;
   try {
@@ -129,6 +169,8 @@ export async function POST(request: Request) {
     return acc;
   }, []).sort((a, b) => a.score - b.score);
 
+  const onPage = await onPagePromise;
+
   const result: AuditResult = {
     requestedUrl: targetUrl,
     finalUrl: lighthouse.finalUrl ?? targetUrl,
@@ -139,6 +181,7 @@ export async function POST(request: Request) {
       bestPractices: categories["best-practices"]?.score ?? null,
     },
     issues: issues.slice(0, 10),
+    onPage,
   };
 
   return NextResponse.json(result);

@@ -63,7 +63,13 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
 - **Scheduling:** Calendly popup widget
 - **Live chat:** Tawk.to
 - **Free Website Audit:** `/audit` page + `/api/audit` route, calls Google's
-  PageSpeed Insights API server-side for real speed/SEO/accessibility scores
+  PageSpeed Insights API server-side for real speed/SEO/accessibility scores,
+  plus an on-page SEO check (title, meta description, headings, image alt
+  text, canonical tag, Open Graph tags, indexability, content length) built
+  by fetching and parsing the page's own HTML with cheerio. Some sites with
+  bot protection will block that direct fetch (their Lighthouse scores still
+  work fine either way) — the UI shows a plain "couldn't check this site
+  directly" message when that happens rather than failing the whole audit.
 - **Hosting:** Vercel (free tier) — connect this repo at
   [vercel.com/new](https://vercel.com/new) for automatic deploys on push
 

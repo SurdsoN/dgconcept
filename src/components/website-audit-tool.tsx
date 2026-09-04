@@ -2,7 +2,15 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Loader2, Search, AlertTriangle, PartyPopper, ArrowRight } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  AlertTriangle,
+  PartyPopper,
+  ArrowRight,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,6 +21,7 @@ import {
   type AuditCategory,
   type AuditResult,
 } from "@/lib/audit";
+import type { CheckStatus } from "@/lib/onpage-seo";
 
 type Status = "idle" | "loading" | "error" | "success";
 
@@ -31,6 +40,18 @@ function ScoreCard({ label, score }: { label: string; score: number | null }) {
     </div>
   );
 }
+
+const STATUS_ICON: Record<CheckStatus, typeof CheckCircle2> = {
+  good: CheckCircle2,
+  warning: AlertTriangle,
+  bad: XCircle,
+};
+
+const STATUS_COLOR: Record<CheckStatus, string> = {
+  good: "text-emerald-600",
+  warning: "text-accent",
+  bad: "text-brand",
+};
 
 export function WebsiteAuditTool() {
   const [url, setUrl] = useState("");
@@ -99,7 +120,7 @@ export function WebsiteAuditTool() {
 
       {status === "loading" && (
         <p className="mt-4 text-center text-sm text-muted">
-          Running a real Lighthouse audit on your site — this can take up to a minute.
+          Running a real Lighthouse audit on your site — this can take up to 90 seconds.
         </p>
       )}
 
@@ -163,6 +184,33 @@ export function WebsiteAuditTool() {
               ))}
             </div>
           )}
+
+          <div className="mt-6 rounded-xl border border-border p-4">
+            <p className="text-sm font-semibold text-ink">On-Page SEO</p>
+            {result.onPage ? (
+              <ul className="mt-2 space-y-2">
+                {result.onPage.checks.map((check) => {
+                  const Icon = STATUS_ICON[check.status];
+                  return (
+                    <li key={check.id} className="flex items-start gap-2 text-sm">
+                      <Icon
+                        className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${STATUS_COLOR[check.status]}`}
+                      />
+                      <span>
+                        <span className="font-medium text-ink">{check.label}:</span>{" "}
+                        <span className="text-muted">{check.detail}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-muted">
+                Couldn&apos;t check this site&apos;s on-page SEO directly — it may be
+                blocking automated requests. The scores above are still accurate.
+              </p>
+            )}
+          </div>
 
           <div className="mt-8 text-center">
             <Button asChild size="lg">
