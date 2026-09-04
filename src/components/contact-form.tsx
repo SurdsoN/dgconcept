@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { useForm, ValidationError } from "@formspree/react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { Send, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +11,8 @@ import { siteConfig } from "@/lib/site-config";
 
 export function ContactForm() {
   const [state, handleSubmit] = useForm(siteConfig.formspreeId);
+  const [verified, setVerified] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   if (state.succeeded) {
     return (
@@ -23,7 +27,14 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        handleSubmit(e);
+        recaptchaRef.current?.reset();
+        setVerified(false);
+      }}
+      className="space-y-4"
+    >
       <div>
         <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-ink">
           Your Name
@@ -55,6 +66,23 @@ export function ContactForm() {
         />
       </div>
       <div>
+        <label htmlFor="website" className="mb-1.5 block text-sm font-medium text-ink">
+          Website URL <span className="font-normal text-muted">(optional)</span>
+        </label>
+        <Input
+          id="website"
+          name="website"
+          type="url"
+          placeholder="https://yourstore.com"
+        />
+        <ValidationError
+          prefix="Website"
+          field="website"
+          errors={state.errors}
+          className="mt-1.5 text-xs text-brand"
+        />
+      </div>
+      <div>
         <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-ink">
           Your Message
         </label>
@@ -72,12 +100,23 @@ export function ContactForm() {
         />
       </div>
 
+      <ReCAPTCHA
+        ref={recaptchaRef}
+        sitekey={siteConfig.recaptchaSiteKey}
+        onChange={(token) => setVerified(!!token)}
+        onExpired={() => setVerified(false)}
+      />
+
       <ValidationError
         errors={state.errors}
         className="flex items-center gap-2 text-sm text-brand"
       />
 
-      <Button type="submit" className="w-full" disabled={state.submitting}>
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={state.submitting || !verified}
+      >
         {state.submitting ? "Sending..." : "Send Message"}
         <Send className="h-4 w-4" />
       </Button>

@@ -21,6 +21,15 @@ export const siteConfig = {
 
   formspreeId: "xaeybnnj",
 
+  // Google reCAPTCHA v2 ("I'm not a robot" checkbox) site key. This is
+  // Google's public test key, which always passes and works everywhere —
+  // it does NOT actually block bots. Get your own free key at
+  // https://www.google.com/recaptcha/admin (register the site, choose
+  // reCAPTCHA v2 "Checkbox"), then paste the Secret Key into your Formspree
+  // form's Settings -> Verification -> reCAPTCHA, and replace this value
+  // with your real Site Key.
+  recaptchaSiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+
   calendlyUrl: "https://calendly.com/omotoleronabanjo/30min",
 
   tawkPropertyId: "6a9a2009dda389344be7fef1",
