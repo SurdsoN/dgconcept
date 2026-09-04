@@ -2,12 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  SoundcloudIcon,
-} from "@/components/icons/social-icons";
+import { InstagramIcon, FlickrIcon } from "@/components/icons/social-icons";
 
 export function SiteFooter() {
   return (
@@ -27,17 +22,23 @@ export function SiteFooter() {
             {siteConfig.description}
           </p>
           <div className="mt-5 flex items-center gap-3">
-            <a href={siteConfig.socials.facebook} aria-label="Facebook" className="text-dark-muted hover:text-white">
-              <FacebookIcon className="h-4 w-4" />
-            </a>
-            <a href={siteConfig.socials.instagram} aria-label="Instagram" className="text-dark-muted hover:text-white">
+            <a
+              href={siteConfig.socials.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="text-dark-muted hover:text-white"
+            >
               <InstagramIcon className="h-4 w-4" />
             </a>
-            <a href={siteConfig.socials.linkedin} aria-label="LinkedIn" className="text-dark-muted hover:text-white">
-              <LinkedinIcon className="h-4 w-4" />
-            </a>
-            <a href={siteConfig.socials.soundcloud} aria-label="SoundCloud" className="text-dark-muted hover:text-white">
-              <SoundcloudIcon className="h-4 w-4" />
+            <a
+              href={siteConfig.socials.flickr}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Flickr"
+              className="text-dark-muted hover:text-white"
+            >
+              <FlickrIcon className="h-4 w-4" />
             </a>
           </div>
         </div>

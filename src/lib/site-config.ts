@@ -14,12 +14,9 @@ export const siteConfig = {
   whatsappNumber: "15488704163", // digits only, no +, no spaces
   location: "Worldwide (Remote)",
 
-  // TODO: replace with real profile URLs
   socials: {
-    facebook: "#",
-    instagram: "#",
-    linkedin: "#",
-    soundcloud: "#",
+    instagram: "https://www.instagram.com/dgconcept_hub/",
+    flickr: "https://www.flickr.com/photos/dgconcept/",
   },
 
   formspreeId: "xaeybnnj",
