@@ -49,40 +49,51 @@ export type Project = {
   name: string;
   category: string;
   description: string;
+  image: string;
 };
 
-// Placeholder portfolio entries — replace with real project names,
-// screenshots, and links once available.
 export const projects: Project[] = [
   {
-    name: "Add Your Project Name",
-    category: "Shopify Store",
-    description: "Short description of the store, the goal, and the result.",
-  },
-  {
-    name: "Add Your Project Name",
+    name: "UrbanNest Realty",
     category: "Business Website",
-    description: "Short description of the site, the goal, and the result.",
+    description:
+      "A boutique real estate brand and site redesign that reads like a lifestyle magazine — mobile conversions rose 64% in the first month.",
+    image: "/images/case-studies/urbannest-realty.png",
   },
   {
-    name: "Add Your Project Name",
-    category: "E-commerce",
-    description: "Short description of the store, the goal, and the result.",
-  },
-  {
-    name: "Add Your Project Name",
-    category: "Portfolio Site",
-    description: "Short description of the site, the goal, and the result.",
-  },
-  {
-    name: "Add Your Project Name",
-    category: "Landing Page",
-    description: "Short description of the page, the goal, and the result.",
-  },
-  {
-    name: "Add Your Project Name",
+    name: "The Woof Pack",
     category: "Shopify Store",
-    description: "Short description of the store, the goal, and the result.",
+    description:
+      "A redesigned Shopify sales page for a dog training brand, lifting conversion rate 39% and mobile checkouts 56%.",
+    image: "/images/case-studies/the-woof-pack.png",
+  },
+  {
+    name: "Verdict & Vision Legal",
+    category: "Business Website",
+    description:
+      "A warmer, more human law firm website that grew consultation inquiries 60% through an embedded scheduling form.",
+    image: "/images/case-studies/verdict-and-vision-legal.png",
+  },
+  {
+    name: "PetNurture",
+    category: "E-commerce",
+    description:
+      "A calming, trust-first redesign for an organic pet care brand that grew conversion rate 139% within a month of launch.",
+    image: "/images/case-studies/petnurture.png",
+  },
+  {
+    name: "Craftoria",
+    category: "E-commerce",
+    description:
+      "A from-scratch eCommerce brand and store for a DIY craft kit company, lifting cart completions 42% in the first 60 days.",
+    image: "/images/case-studies/craftoria.png",
+  },
+  {
+    name: "Mindnest Therapy",
+    category: "Business Website",
+    description:
+      "A warmer, mobile-first redesign for a therapy practice that grew booking conversions 78% in the first three weeks.",
+    image: "/images/case-studies/mindnest-therapy.png",
   },
 ];
 

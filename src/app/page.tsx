@@ -20,7 +20,7 @@ import { FaqSection } from "@/components/sections/faq-section";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { siteConfig } from "@/lib/site-config";
-import { generalFaqs } from "@/lib/content";
+import { generalFaqs, projects } from "@/lib/content";
 
 const stats = [
   { icon: Star, value: "5.0", label: "Average Rating" },
@@ -55,11 +55,7 @@ const services = [
   },
 ];
 
-const portfolioPreview = [
-  { name: "E-commerce Store", category: "Shopify Build" },
-  { name: "Service Business Site", category: "Website Design" },
-  { name: "Personal Brand Site", category: "Portfolio" },
-];
+const portfolioPreview = projects.slice(0, 3);
 
 export default function Home() {
   return (
@@ -163,13 +159,19 @@ export default function Home() {
           <SectionHeading
             eyebrow="Recent Work"
             title="Project Showcase"
-            description="A sample of the kind of work I build. Full case studies with real client results are on the way."
+            description="A sample of real projects and results — full case studies below."
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
             {portfolioPreview.map((project) => (
               <Card key={project.name} className="overflow-hidden">
-                <div className="flex h-40 items-center justify-center bg-gradient-to-br from-brand to-accent text-sm font-medium text-white/80">
-                  Add project screenshot
+                <div className="relative h-40 w-full">
+                  <Image
+                    src={project.image}
+                    alt={project.name}
+                    fill
+                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
                 </div>
                 <div className="p-5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-brand">

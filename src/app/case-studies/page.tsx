@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { projects } from "@/lib/content";
+import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Case Studies",
@@ -22,8 +26,7 @@ export default function CaseStudiesPage() {
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted">
             Selected websites and Shopify stores built for founders around the
-            world. This section is ready for real project screenshots and
-            results — swap in the details below as projects are added.
+            world.
           </p>
         </div>
       </section>
@@ -32,8 +35,14 @@ export default function CaseStudiesPage() {
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, i) => (
             <Card key={`${project.name}-${i}`} className="overflow-hidden">
-              <div className="flex h-44 items-center justify-center bg-gradient-to-br from-brand to-accent text-sm font-medium text-white/80">
-                Add project screenshot
+              <div className="relative h-44 w-full">
+                <Image
+                  src={project.image}
+                  alt={project.name}
+                  fill
+                  sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover"
+                />
               </div>
               <div className="p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-brand">
@@ -48,6 +57,14 @@ export default function CaseStudiesPage() {
               </div>
             </Card>
           ))}
+        </div>
+
+        <div className="container-page mt-4 text-center">
+          <Button asChild variant="outline">
+            <a href={siteConfig.socials.flickr} target="_blank" rel="noopener noreferrer">
+              More Case Studies <ArrowUpRight className="h-4 w-4" />
+            </a>
+          </Button>
         </div>
       </section>
 
