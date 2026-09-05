@@ -223,6 +223,15 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
       <div className="container-page max-w-3xl">
         <div className="flex items-start justify-between gap-4">
           <div>
+            {mode === "edit" && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="mb-2 text-sm font-medium text-brand hover:underline"
+              >
+                ← New Post
+              </button>
+            )}
             <h1 className="text-2xl font-bold text-ink">
               {mode === "edit" ? "Edit Blog Post" : "New Blog Post"}
             </h1>
