@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CalendarDays, Clock } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllPosts, getPostSource } from "@/lib/blog";
+import { ShareButtons } from "@/components/share-buttons";
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -50,8 +51,16 @@ export default async function BlogPostPage({
           <span>By {post.meta.author}</span>
         </div>
 
+        <div className="mt-6 border-y border-border py-4">
+          <ShareButtons title={post.meta.title} />
+        </div>
+
         <div className="prose prose-neutral mt-10 max-w-none prose-headings:font-bold prose-headings:text-ink prose-p:text-muted prose-li:text-muted prose-a:text-brand prose-strong:text-ink">
           <MDXRemote source={post.content} />
+        </div>
+
+        <div className="mt-10 border-t border-border pt-6">
+          <ShareButtons title={post.meta.title} />
         </div>
       </div>
     </article>
