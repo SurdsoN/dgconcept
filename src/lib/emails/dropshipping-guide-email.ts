@@ -11,6 +11,7 @@ export function buildDropshippingGuideEmail({
   downloadUrl: string;
 }): { subject: string; html: string; text: string } {
   const logoUrl = `${siteConfig.url}/images/logo.png`;
+  const bannerUrl = `${siteConfig.url}/images/lead-magnets/dropshipping-guide-banner.jpg`;
   const firstName = name.trim().split(/\s+/)[0] || "there";
 
   const subject = "Your Free Dropshipping Guide is ready 🎉";
@@ -42,16 +43,14 @@ export function buildDropshippingGuideEmail({
             </tr>
             <tr>
               <td style="padding:24px 32px 0;">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fb923c,#ea580c);border-radius:8px;">
-                  <tr>
-                    <td style="padding:24px 16px;text-align:center;">
-                      <p style="margin:0 0 4px;font-size:14px;font-weight:bold;letter-spacing:2px;color:#ffffff;">FREE</p>
-                      <p style="margin:0;font-size:26px;font-weight:900;line-height:1.15;color:#111111;text-transform:uppercase;">Dropshipping<br />Guide</p>
-                      <p style="margin:12px 0 4px;font-size:20px;color:#ffffff;">&#8595;</p>
-                      <p style="margin:0;font-size:13px;font-weight:bold;color:#ffffff;">over 50+ downloads</p>
-                    </td>
-                  </tr>
-                </table>
+                <a href="${downloadUrl}" style="display:block;">
+                  <img
+                    src="${bannerUrl}"
+                    alt="Free Dropshipping Guide - over 50+ downloads"
+                    width="416"
+                    style="display:block;width:100%;max-width:416px;height:auto;border-radius:8px;border:0;"
+                  />
+                </a>
               </td>
             </tr>
             <tr>
