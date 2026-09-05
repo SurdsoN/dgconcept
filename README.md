@@ -114,6 +114,20 @@ post's URL isn't supported, since it would break any links already pointing
 at the old one. Hit **Update Post** to commit the change; **Cancel** returns
 to a blank "new post" form without saving anything.
 
+## SEO
+
+`sitemap.xml` and `robots.txt` are generated automatically (Next.js
+metadata routes, `src/app/sitemap.ts` / `src/app/robots.ts`) from the
+static pages plus every blog post — nothing to maintain by hand. Every
+page also carries `Person`/`ProfessionalService`/`WebSite` JSON-LD
+structured data (`src/components/structured-data.tsx`); `LocalBusiness`
+was deliberately not used since there's no physical address for a fully
+remote business.
+
+Set `NEXT_PUBLIC_SITE_URL` once a custom domain is live (Vercel Project ->
+Settings -> Environment Variables) — until then, the sitemap/robots/
+structured data URLs fall back to Vercel's own production URL automatically.
+
 ## Stack
 
 - **Framework:** Next.js (App Router)

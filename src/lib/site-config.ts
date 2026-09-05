@@ -1,7 +1,19 @@
 // Central place for brand data. Replace the placeholder values (marked TODO)
 // with real details before launch.
 
+// Used for the sitemap, robots.txt, canonical URLs, and structured data.
+// Set NEXT_PUBLIC_SITE_URL once a custom domain is live; until then this
+// falls back to Vercel's own production URL, then the current deployment
+// URL, then localhost for local dev.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL &&
+    `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`) ||
+  (process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`) ||
+  "http://localhost:3000";
+
 export const siteConfig = {
+  url: siteUrl,
   name: "DgConcept",
   founder: "Omo Tola",
   founderTitle: "Founder & Web Architect",
