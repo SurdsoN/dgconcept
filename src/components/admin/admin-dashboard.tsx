@@ -280,9 +280,12 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
               />
             </div>
 
-            {previewSrc && (
-              <div>
-                <p className="mb-1.5 text-sm font-medium text-ink">Featured Image</p>
+            <div>
+              <label htmlFor="post-image" className="mb-1.5 block text-sm font-medium text-ink">
+                Featured Image
+              </label>
+
+              {previewSrc && (
                 <div className="relative h-40 w-full overflow-hidden rounded-xl bg-surface-muted">
                   {imagePreview ? (
                     // eslint-disable-next-line @next/next/no-img-element -- local blob preview, not a site asset
@@ -291,34 +294,34 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
                     <Image src={previewSrc} alt="" fill sizes="700px" className="object-cover" />
                   )}
                 </div>
+              )}
 
-                <input
-                  id="post-image"
-                  type="file"
-                  accept={ACCEPTED_IMAGE_TYPES.join(",")}
-                  onChange={handleImageChange}
-                  className="mt-2 block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand hover:file:bg-brand-100"
-                />
+              <input
+                id="post-image"
+                type="file"
+                accept={ACCEPTED_IMAGE_TYPES.join(",")}
+                onChange={handleImageChange}
+                className="mt-2 block w-full text-sm text-muted file:mr-3 file:rounded-full file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand hover:file:bg-brand-100"
+              />
 
-                {showExistingImage && (
-                  <label className="mt-2 flex items-center gap-2 text-xs text-muted">
-                    <input
-                      type="checkbox"
-                      checked={removeExistingImage}
-                      onChange={(e) => setRemoveExistingImage(e.target.checked)}
-                    />
-                    Remove this image and use an automatic stock photo instead
-                  </label>
-                )}
+              {showExistingImage && (
+                <label className="mt-2 flex items-center gap-2 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    checked={removeExistingImage}
+                    onChange={(e) => setRemoveExistingImage(e.target.checked)}
+                  />
+                  Remove this image and use an automatic stock photo instead
+                </label>
+              )}
 
-                <p className="mt-1.5 text-xs text-muted">
-                  {imageFile || showExistingImage
-                    ? "This uploaded photo will be used for this post."
-                    : "No image uploaded — a free stock photo is picked automatically based on the slug."}{" "}
-                  JPG, PNG, WEBP, or GIF, up to 3MB.
-                </p>
-              </div>
-            )}
+              <p className="mt-1.5 text-xs text-muted">
+                {imageFile || showExistingImage
+                  ? "This uploaded photo will be used for this post."
+                  : "No image uploaded — a free stock photo will be picked automatically based on the slug."}{" "}
+                JPG, PNG, WEBP, or GIF, up to 3MB.
+              </p>
+            </div>
 
             <div>
               <label htmlFor="post-excerpt" className="mb-1.5 block text-sm font-medium text-ink">
