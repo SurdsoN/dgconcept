@@ -53,6 +53,42 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
   Add more by dropping new `.mdx` files (with the same frontmatter format)
   into that folder.
 
+## Blog Admin (`/admin`)
+
+A password-protected page for publishing new blog posts without touching
+code. It writes a new `.mdx` file straight to this GitHub repo via the
+GitHub API, which triggers the same Vercel auto-deploy as any other push —
+no database, no separate CMS service.
+
+**Setup (required before `/admin` will work):**
+
+1. **Create a GitHub token** — go to
+   [github.com/settings/tokens?type=beta](https://github.com/settings/tokens?type=beta)
+   and generate a *fine-grained* personal access token scoped to just this
+   repository (`SurdsoN/dgconcept`), with **Contents: Read and write**
+   permission and nothing else. Copy the token — you won't see it again.
+2. **Set environment variables** — in `.env.local` for local dev, and under
+   Vercel Project → Settings → Environment Variables for production:
+   - `GITHUB_TOKEN` — the token from step 1.
+   - `GITHUB_REPO` — `SurdsoN/dgconcept`.
+   - `GITHUB_BRANCH` — optional, only needed if the deployed branch ever
+     changes from `claude/website-design-requirements-x0up25`.
+   - `ADMIN_PASSWORD` — the password you'll use to log into `/admin`. Pick
+     something you don't use anywhere else.
+   - `ADMIN_SESSION_SECRET` — a long random string (e.g. run
+     `openssl rand -hex 32`) used to sign the login session. Not a password
+     you type in — just a secret the server uses internally.
+3. Redeploy (or restart `npm run dev` locally) so the new environment
+   variables take effect.
+
+**Using it:** go to `/admin`, log in with `ADMIN_PASSWORD`, fill in the
+title, excerpt, date, author, and Markdown content, and hit Publish. The
+post is committed to `src/content/blog/<slug>.mdx` on the deployed branch
+immediately; Vercel then builds and deploys it automatically, same as a
+manual push — usually live within a minute or two. The page blocks
+publishing over an existing slug, so it can't accidentally overwrite a
+post.
+
 ## Stack
 
 - **Framework:** Next.js (App Router)
