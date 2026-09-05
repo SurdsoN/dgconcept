@@ -27,21 +27,33 @@ function githubHeaders(token: string) {
   };
 }
 
-export async function fileExistsOnGitHub(path: string): Promise<boolean> {
+// Reads a file straight from GitHub (the true current state, not whatever
+// this serverless instance last deployed) so edits always start from the
+// latest content and updates always carry the right sha.
+export async function getFileFromGitHub(
+  path: string,
+): Promise<{ content: string; sha: string } | null> {
   const { token, repo, branch } = getConfig();
   const res = await fetch(
     `${GITHUB_API}/repos/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`,
     { headers: githubHeaders(token) },
   );
-  if (res.status === 404) return false;
-  if (res.ok) return true;
-  throw new Error(`GitHub lookup failed (${res.status}): ${await res.text()}`);
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`GitHub lookup failed (${res.status}): ${await res.text()}`);
+  }
+  const data = (await res.json()) as { content: string; sha: string };
+  return { content: Buffer.from(data.content, "base64").toString("utf-8"), sha: data.sha };
 }
 
-export async function createFileOnGitHub(
+// Creates a new file, or replaces one when `sha` (from getFileFromGitHub)
+// is given — GitHub's Contents API requires the current sha to update a
+// file, otherwise it rejects the write as a conflict.
+export async function upsertFileOnGitHub(
   path: string,
-  content: string,
+  base64Content: string,
   message: string,
+  sha?: string,
 ): Promise<void> {
   const { token, repo, branch } = getConfig();
   const res = await fetch(`${GITHUB_API}/repos/${repo}/contents/${path}`, {
@@ -49,8 +61,9 @@ export async function createFileOnGitHub(
     headers: { ...githubHeaders(token), "Content-Type": "application/json" },
     body: JSON.stringify({
       message,
-      content: Buffer.from(content, "utf-8").toString("base64"),
+      content: base64Content,
       branch,
+      ...(sha ? { sha } : {}),
     }),
   });
   if (!res.ok) {

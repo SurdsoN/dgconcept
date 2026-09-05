@@ -12,12 +12,17 @@ export type PostMeta = {
   date: string;
   author: string;
   tags: string[];
+  image: string | null;
   readingTime: string;
 };
 
 function toTags(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.filter((tag): tag is string => typeof tag === "string" && tag.trim().length > 0);
+}
+
+function toImage(value: unknown): string | null {
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
 }
 
 export function getAllPosts(): PostMeta[] {
@@ -37,6 +42,7 @@ export function getAllPosts(): PostMeta[] {
       date: data.date as string,
       author: (data.author as string) ?? "DgConcept",
       tags: toTags(data.tags),
+      image: toImage(data.image),
       readingTime: readingTime(content).text,
     };
   });
@@ -60,6 +66,7 @@ export function getPostSource(slug: string) {
       date: data.date as string,
       author: (data.author as string) ?? "DgConcept",
       tags: toTags(data.tags),
+      image: toImage(data.image),
       readingTime: readingTime(content).text,
     } satisfies PostMeta,
   };

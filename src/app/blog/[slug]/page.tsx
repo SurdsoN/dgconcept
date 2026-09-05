@@ -85,7 +85,7 @@ export default async function BlogPostPage({
           </div>
 
           <div className="mt-8">
-            <BlogPostImage slug={slug} title={post.meta.title} />
+            <BlogPostImage slug={slug} title={post.meta.title} image={post.meta.image} />
           </div>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_260px]">

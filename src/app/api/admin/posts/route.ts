@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import matter from "gray-matter";
 import { ADMIN_COOKIE_NAME, isSessionTokenValid } from "@/lib/admin-auth";
-import { fileExistsOnGitHub, createFileOnGitHub } from "@/lib/github-publish";
-import { slugify, SLUG_PATTERN } from "@/lib/slug";
+import { getFileFromGitHub, upsertFileOnGitHub } from "@/lib/github-publish";
+import { parsePostPayload } from "@/lib/post-payload";
 
 export const runtime = "nodejs";
-
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
@@ -23,58 +20,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { title, excerpt, date, author, content, tags: rawTags, slug: rawSlug } = (body ??
-    {}) as Record<string, unknown>;
-
-  if (typeof title !== "string" || !title.trim()) {
-    return NextResponse.json({ error: "Title is required" }, { status: 400 });
+  const parsed = parsePostPayload((body ?? {}) as Record<string, unknown>);
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: parsed.status });
   }
-  if (typeof excerpt !== "string" || !excerpt.trim()) {
-    return NextResponse.json({ error: "Excerpt is required" }, { status: 400 });
-  }
-  if (typeof content !== "string" || !content.trim()) {
-    return NextResponse.json({ error: "Content is required" }, { status: 400 });
-  }
-  if (typeof date !== "string" || !DATE_PATTERN.test(date)) {
-    return NextResponse.json({ error: "Date must be in YYYY-MM-DD format" }, { status: 400 });
-  }
-
-  const slug = slugify(typeof rawSlug === "string" && rawSlug.trim() ? rawSlug : title);
-  if (!slug || !SLUG_PATTERN.test(slug)) {
-    return NextResponse.json(
-      { error: "Could not build a valid URL slug — try a different title or slug" },
-      { status: 400 },
-    );
-  }
-
+  const { title, slug, fileContent } = parsed.data;
   const path = `src/content/blog/${slug}.mdx`;
 
   try {
-    const exists = await fileExistsOnGitHub(path);
-    if (exists) {
+    const existing = await getFileFromGitHub(path);
+    if (existing) {
       return NextResponse.json(
         { error: `A post with the slug "${slug}" already exists — choose a different title or slug` },
         { status: 409 },
       );
     }
 
-    const tags =
-      typeof rawTags === "string"
-        ? rawTags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean)
-        : [];
-
-    const fileContent = matter.stringify(`${content.trim()}\n`, {
-      title: title.trim(),
-      excerpt: excerpt.trim(),
-      date,
-      author: typeof author === "string" && author.trim() ? author.trim() : "Omo Tola",
-      ...(tags.length > 0 ? { tags } : {}),
-    });
-
-    await createFileOnGitHub(path, fileContent, `Add blog post: ${title.trim()}`);
+    await upsertFileOnGitHub(
+      path,
+      Buffer.from(fileContent, "utf-8").toString("base64"),
+      `Add blog post: ${title}`,
+    );
 
     return NextResponse.json({ slug });
   } catch (error) {

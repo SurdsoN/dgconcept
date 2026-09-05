@@ -5,7 +5,7 @@ import { CalendarDays, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getAllPosts } from "@/lib/blog";
-import { getPostImageUrl } from "@/lib/blog-image";
+import { resolvePostImage } from "@/lib/blog-image";
 
 export const metadata: Metadata = {
   title: "Blog & Resources",
@@ -35,7 +35,7 @@ export default function BlogPage() {
               <Card className="h-full overflow-hidden p-0 transition-shadow hover:shadow-md">
                 <div className="relative h-40 w-full">
                   <Image
-                    src={getPostImageUrl(post.slug, 600, 340)}
+                    src={resolvePostImage(post.slug, post.image, 600, 340)}
                     alt={post.title}
                     fill
                     sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"

@@ -99,6 +99,21 @@ manual push — usually live within a minute or two. The page blocks
 publishing over an existing slug, so it can't accidentally overwrite a
 post.
 
+**Uploading your own image:** the Featured Image field has a file picker —
+choose a JPG, PNG, WEBP, or GIF up to 3MB and it's committed to
+`public/images/blog/<slug>.<ext>` alongside the post, replacing the
+automatic stock photo for that post only. Leave it alone and the post keeps
+using the automatic photo.
+
+**Editing a published post:** click **Edit** next to any post under
+"Published Posts" — it loads that post's current title, excerpt, tags,
+image, and content (read straight from GitHub, so it always reflects the
+latest saved version even if a previous edit hasn't finished deploying
+yet) back into the form. The URL slug is locked while editing — renaming a
+post's URL isn't supported, since it would break any links already pointing
+at the old one. Hit **Update Post** to commit the change; **Cancel** returns
+to a blank "new post" form without saving anything.
+
 ## Stack
 
 - **Framework:** Next.js (App Router)
