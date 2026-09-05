@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CtaBanner } from "@/components/sections/cta-banner";
-import { projects } from "@/lib/content";
+import { getAllCaseStudies, getCaseStudyCategories } from "@/lib/case-studies";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -13,7 +14,18 @@ export const metadata: Metadata = {
   description: "Selected website and Shopify store projects.",
 };
 
-export default function CaseStudiesPage() {
+export default async function CaseStudiesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const allCaseStudies = getAllCaseStudies();
+  const categories = getCaseStudyCategories(allCaseStudies);
+  const filtered = category
+    ? allCaseStudies.filter((project) => project.category === category)
+    : allCaseStudies;
+
   return (
     <>
       <section className="bg-surface-muted">
@@ -32,38 +44,78 @@ export default function CaseStudiesPage() {
       </section>
 
       <section className="py-16">
-        <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, i) => (
-            <a
-              key={`${project.name}-${i}`}
-              href={project.flickrUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
-                <div className="relative h-44 w-full">
-                  <Image
-                    src={project.image}
-                    alt={project.name}
-                    fill
-                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-5">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-brand">
-                    {project.category}
-                  </p>
-                  <p className="mt-1 text-base font-semibold text-ink">
-                    {project.name}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">
-                    {project.description}
-                  </p>
-                </div>
-              </Card>
-            </a>
-          ))}
+        <div className="container-page">
+          {categories.length > 1 && (
+            <div className="mb-8 flex flex-wrap gap-2">
+              <Link
+                href="/case-studies"
+                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                  !category
+                    ? "bg-brand text-white"
+                    : "border border-border text-muted hover:border-brand hover:text-brand"
+                }`}
+              >
+                All
+              </Link>
+              {categories.map((cat) => (
+                <Link
+                  key={cat}
+                  href={`/case-studies?category=${encodeURIComponent(cat)}`}
+                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                    category === cat
+                      ? "bg-brand text-white"
+                      : "border border-border text-muted hover:border-brand hover:text-brand"
+                  }`}
+                >
+                  {cat}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((project) => {
+              const href = project.liveUrl ?? project.flickrUrl;
+              const card = (
+                <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+                  <div className="relative h-44 w-full">
+                    <Image
+                      src={project.images[0]}
+                      alt={project.name}
+                      fill
+                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-brand">
+                      {project.category}
+                    </p>
+                    <p className="mt-1 text-base font-semibold text-ink">
+                      {project.name}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted">
+                      {project.description}
+                    </p>
+                  </div>
+                </Card>
+              );
+
+              return href ? (
+                <a key={project.slug} href={href} target="_blank" rel="noopener noreferrer">
+                  {card}
+                </a>
+              ) : (
+                <div key={project.slug}>{card}</div>
+              );
+            })}
+          </div>
+
+          {filtered.length === 0 && (
+            <p className="py-10 text-center text-sm text-muted">
+              No case studies in this category yet.
+            </p>
+          )}
         </div>
 
         <div className="container-page mt-4 text-center">

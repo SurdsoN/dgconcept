@@ -20,7 +20,8 @@ import { FaqSection } from "@/components/sections/faq-section";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { siteConfig } from "@/lib/site-config";
-import { generalFaqs, projects } from "@/lib/content";
+import { generalFaqs } from "@/lib/content";
+import { getAllCaseStudies } from "@/lib/case-studies";
 
 const stats = [
   { icon: Star, value: "5.0", label: "Average Rating" },
@@ -55,9 +56,9 @@ const services = [
   },
 ];
 
-const portfolioPreview = projects.slice(0, 3);
-
 export default function Home() {
+  const portfolioPreview = getAllCaseStudies().slice(0, 3);
+
   return (
     <>
       {/* Hero */}
@@ -162,12 +163,13 @@ export default function Home() {
             description="A sample of real projects and results — full case studies below."
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            {portfolioPreview.map((project) => (
-              <a key={project.name} href={project.flickrUrl} target="_blank" rel="noopener noreferrer">
+            {portfolioPreview.map((project) => {
+              const href = project.liveUrl ?? project.flickrUrl;
+              const card = (
                 <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
                   <div className="relative h-40 w-full">
                     <Image
-                      src={project.image}
+                      src={project.images[0]}
                       alt={project.name}
                       fill
                       sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
@@ -183,8 +185,15 @@ export default function Home() {
                     </p>
                   </div>
                 </Card>
-              </a>
-            ))}
+              );
+              return href ? (
+                <a key={project.slug} href={href} target="_blank" rel="noopener noreferrer">
+                  {card}
+                </a>
+              ) : (
+                <div key={project.slug}>{card}</div>
+              );
+            })}
           </div>
           <div className="mt-8 text-center">
             <Button asChild variant="outline">
