@@ -8,7 +8,7 @@ import { extractToc } from "@/lib/toc";
 import { rehypeHeadingIds } from "@/lib/mdx-heading-ids";
 import { Badge } from "@/components/ui/badge";
 import { ShareButtons } from "@/components/share-buttons";
-import { BlogHeroBanner } from "@/components/blog/blog-hero-banner";
+import { BlogPostImage } from "@/components/blog/blog-post-image";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { AuthorBio } from "@/components/blog/author-bio";
 import { RelatedPosts } from "@/components/blog/related-posts";
@@ -85,7 +85,7 @@ export default async function BlogPostPage({
           </div>
 
           <div className="mt-8">
-            <BlogHeroBanner slug={slug} />
+            <BlogPostImage slug={slug} title={post.meta.title} />
           </div>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_260px]">

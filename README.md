@@ -55,7 +55,12 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
   `excerpt`, `date`, `author`, and an optional `tags: ["tag one", "tag two"]`
   array — the first tag shows as the post's category badge, all of them
   render as pills under the article, and they're used to pick "Related
-  Articles" (posts sharing the most tags first).
+  Articles" (posts sharing the most tags first). The hero image on each
+  post and its thumbnail on `/blog` come from
+  [Picsum Photos](https://picsum.photos) (`src/lib/blog-image.ts`) — real,
+  freely-usable stock photography, no API key or attribution needed, one
+  consistent photo per post (seeded from its slug). Swap in a real photo
+  per post later by pointing `getPostImageUrl` at your own image instead.
 
 ## Blog Admin (`/admin`)
 
