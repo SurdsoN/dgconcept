@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { FaqSection } from "@/components/sections/faq-section";
 import { CtaBanner } from "@/components/sections/cta-banner";
+import { PricingQuiz } from "@/components/pricing-quiz";
 import { pricingTiers, comparisonRows, pricingFaqs } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -127,6 +128,19 @@ export default function PricingPage() {
         </div>
       </section>
 
+      <section className="py-20">
+        <div className="container-page">
+          <SectionHeading
+            eyebrow="Not Sure Which Package Fits?"
+            title="Take the 30-Second Quiz"
+            description="Answer a few quick questions and get a recommended starting point."
+          />
+          <div className="mt-10">
+            <PricingQuiz tiers={pricingTiers} />
+          </div>
+        </div>
+      </section>
+
       <FaqSection
         title="Pricing FAQ"
         description="Common questions about how pricing and packages work."
@@ -134,8 +148,8 @@ export default function PricingPage() {
       />
 
       <CtaBanner
-        title="Not Sure Which Package Fits?"
-        description="Send me your website goals and I'll recommend the right starting point and a custom quote within 24 hours."
+        title="Ready to Start Your Project?"
+        description="Send me your website goals and I'll follow up with a custom quote within 24 hours."
         primaryLabel="Get Custom Quote"
       />
     </>
