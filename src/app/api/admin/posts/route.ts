@@ -23,10 +23,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { title, excerpt, date, author, content, slug: rawSlug } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const { title, excerpt, date, author, content, tags: rawTags, slug: rawSlug } = (body ??
+    {}) as Record<string, unknown>;
 
   if (typeof title !== "string" || !title.trim()) {
     return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -60,11 +58,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const tags =
+      typeof rawTags === "string"
+        ? rawTags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : [];
+
     const fileContent = matter.stringify(`${content.trim()}\n`, {
       title: title.trim(),
       excerpt: excerpt.trim(),
       date,
       author: typeof author === "string" && author.trim() ? author.trim() : "Omo Tola",
+      ...(tags.length > 0 ? { tags } : {}),
     });
 
     await createFileOnGitHub(path, fileContent, `Add blog post: ${title.trim()}`);

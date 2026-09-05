@@ -21,6 +21,7 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
   const [excerpt, setExcerpt] = useState("");
   const [date, setDate] = useState(todayIso());
   const [author, setAuthor] = useState("Omo Tola");
+  const [tags, setTags] = useState("");
   const [content, setContent] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
       const res = await fetch("/api/admin/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, slug, excerpt, date, author, content }),
+        body: JSON.stringify({ title, slug, excerpt, date, author, tags, content }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -54,6 +55,7 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
       setSlug("");
       setSlugTouched(false);
       setExcerpt("");
+      setTags("");
       setContent("");
       setDate(todayIso());
     } catch {
@@ -141,6 +143,17 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
                 </label>
                 <Input id="post-author" value={author} onChange={(e) => setAuthor(e.target.value)} />
               </div>
+            </div>
+            <div>
+              <label htmlFor="post-tags" className="mb-1.5 block text-sm font-medium text-ink">
+                Tags <span className="font-normal text-muted">(comma-separated, optional)</span>
+              </label>
+              <Input
+                id="post-tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="shopify, seo, conversion"
+              />
             </div>
             <div>
               <label htmlFor="post-content" className="mb-1.5 block text-sm font-medium text-ink">

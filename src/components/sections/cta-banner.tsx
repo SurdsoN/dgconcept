@@ -7,12 +7,16 @@ export function CtaBanner({
   description,
   primaryLabel = "Start a Project",
   primaryHref = "/contact",
+  secondaryLabel,
+  secondaryHref,
   showCalendly = true,
 }: {
   title: string;
   description: string;
   primaryLabel?: string;
   primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
   showCalendly?: boolean;
 }) {
   return (
@@ -29,6 +33,11 @@ export function CtaBanner({
             <Button asChild variant="dark" size="lg">
               <Link href={primaryHref}>{primaryLabel} →</Link>
             </Button>
+            {secondaryLabel && secondaryHref && (
+              <Button asChild variant="outlineInverse" size="lg">
+                <Link href={secondaryHref}>{secondaryLabel}</Link>
+              </Button>
+            )}
             {showCalendly && (
               <CalendlyButton variant="outlineInverse" size="lg">
                 Book a Call

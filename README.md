@@ -51,7 +51,11 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
   cards. Replace with real project names, screenshots, and descriptions.
 - **Blog posts** (`src/content/blog/*.mdx`) — two sample posts are included.
   Add more by dropping new `.mdx` files (with the same frontmatter format)
-  into that folder.
+  into that folder, or use `/admin` (see below). Frontmatter: `title`,
+  `excerpt`, `date`, `author`, and an optional `tags: ["tag one", "tag two"]`
+  array — the first tag shows as the post's category badge, all of them
+  render as pills under the article, and they're used to pick "Related
+  Articles" (posts sharing the most tags first).
 
 ## Blog Admin (`/admin`)
 
@@ -82,7 +86,8 @@ no database, no separate CMS service.
    variables take effect.
 
 **Using it:** go to `/admin`, log in with `ADMIN_PASSWORD`, fill in the
-title, excerpt, date, author, and Markdown content, and hit Publish. The
+title, excerpt, date, author, optional comma-separated tags, and Markdown
+content, and hit Publish. The
 post is committed to `src/content/blog/<slug>.mdx` on the deployed branch
 immediately; Vercel then builds and deploys it automatically, same as a
 manual push — usually live within a minute or two. The page blocks
