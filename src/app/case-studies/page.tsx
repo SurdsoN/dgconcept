@@ -34,28 +34,35 @@ export default function CaseStudiesPage() {
       <section className="py-16">
         <div className="container-page grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, i) => (
-            <Card key={`${project.name}-${i}`} className="overflow-hidden">
-              <div className="relative h-44 w-full">
-                <Image
-                  src={project.image}
-                  alt={project.name}
-                  fill
-                  sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-brand">
-                  {project.category}
-                </p>
-                <p className="mt-1 text-base font-semibold text-ink">
-                  {project.name}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {project.description}
-                </p>
-              </div>
-            </Card>
+            <a
+              key={`${project.name}-${i}`}
+              href={project.flickrUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+                <div className="relative h-44 w-full">
+                  <Image
+                    src={project.image}
+                    alt={project.name}
+                    fill
+                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-brand">
+                    {project.category}
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-ink">
+                    {project.name}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {project.description}
+                  </p>
+                </div>
+              </Card>
+            </a>
           ))}
         </div>
 

@@ -163,25 +163,27 @@ export default function Home() {
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
             {portfolioPreview.map((project) => (
-              <Card key={project.name} className="overflow-hidden">
-                <div className="relative h-40 w-full">
-                  <Image
-                    src={project.image}
-                    alt={project.name}
-                    fill
-                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-5">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-brand">
-                    {project.category}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-ink">
-                    {project.name}
-                  </p>
-                </div>
-              </Card>
+              <a key={project.name} href={project.flickrUrl} target="_blank" rel="noopener noreferrer">
+                <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+                  <div className="relative h-40 w-full">
+                    <Image
+                      src={project.image}
+                      alt={project.name}
+                      fill
+                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-brand">
+                      {project.category}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-ink">
+                      {project.name}
+                    </p>
+                  </div>
+                </Card>
+              </a>
             ))}
           </div>
           <div className="mt-8 text-center">

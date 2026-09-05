@@ -50,6 +50,7 @@ export type Project = {
   category: string;
   description: string;
   image: string;
+  flickrUrl: string;
 };
 
 export const projects: Project[] = [
@@ -59,6 +60,7 @@ export const projects: Project[] = [
     description:
       "A boutique real estate brand and site redesign that reads like a lifestyle magazine — mobile conversions rose 64% in the first month.",
     image: "/images/case-studies/urbannest-realty.png",
+    flickrUrl: "https://www.flickr.com/photos/dgconcept/54515588179/in/photostream/",
   },
   {
     name: "The Woof Pack",
@@ -66,6 +68,7 @@ export const projects: Project[] = [
     description:
       "A redesigned Shopify sales page for a dog training brand, lifting conversion rate 39% and mobile checkouts 56%.",
     image: "/images/case-studies/the-woof-pack.png",
+    flickrUrl: "https://www.flickr.com/photos/dgconcept/54514394627/in/photostream/",
   },
   {
     name: "Verdict & Vision Legal",
@@ -73,6 +76,7 @@ export const projects: Project[] = [
     description:
       "A warmer, more human law firm website that grew consultation inquiries 60% through an embedded scheduling form.",
     image: "/images/case-studies/verdict-and-vision-legal.png",
+    flickrUrl: "https://www.flickr.com/photos/dgconcept/54515501599/in/photostream/",
   },
   {
     name: "PetNurture",
@@ -80,6 +84,7 @@ export const projects: Project[] = [
     description:
       "A calming, trust-first redesign for an organic pet care brand that grew conversion rate 139% within a month of launch.",
     image: "/images/case-studies/petnurture.png",
+    flickrUrl: "https://www.flickr.com/photos/dgconcept/54519755001/in/photostream/",
   },
   {
     name: "Craftoria",
@@ -87,6 +92,7 @@ export const projects: Project[] = [
     description:
       "A from-scratch eCommerce brand and store for a DIY craft kit company, lifting cart completions 42% in the first 60 days.",
     image: "/images/case-studies/craftoria.png",
+    flickrUrl: "https://www.flickr.com/photos/dgconcept/54523352446/in/photostream/",
   },
   {
     name: "Mindnest Therapy",
@@ -94,6 +100,7 @@ export const projects: Project[] = [
     description:
       "A warmer, mobile-first redesign for a therapy practice that grew booking conversions 78% in the first three weeks.",
     image: "/images/case-studies/mindnest-therapy.png",
+    flickrUrl: "https://www.flickr.com/photos/dgconcept/54515225882/in/photostream/",
   },
 ];
 
