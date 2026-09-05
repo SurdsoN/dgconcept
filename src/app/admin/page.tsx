@@ -4,10 +4,12 @@ import { ADMIN_COOKIE_NAME, isSessionTokenValid } from "@/lib/admin-auth";
 import { getAllPosts } from "@/lib/blog";
 import { getAllCaseStudies, getCaseStudyCategories } from "@/lib/case-studies";
 import { getApprovedReviews, getPendingReviews } from "@/lib/reviews";
+import { getAllLeads } from "@/lib/leads";
 import { AdminLogin } from "@/components/admin/admin-login";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
 import { CaseStudyDashboard } from "@/components/admin/case-study-dashboard";
 import { ReviewDashboard } from "@/components/admin/review-dashboard";
+import { LeadDashboard } from "@/components/admin/lead-dashboard";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -28,6 +30,10 @@ export default async function AdminPage({
 
   const { tab } = await searchParams;
   const pendingReviews = getPendingReviews();
+
+  if (tab === "leads") {
+    return <LeadDashboard leads={getAllLeads()} />;
+  }
 
   if (tab === "reviews") {
     return <ReviewDashboard reviews={pendingReviews} approvedReviews={getApprovedReviews()} />;

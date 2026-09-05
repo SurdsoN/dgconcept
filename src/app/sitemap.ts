@@ -7,6 +7,7 @@ const STATIC_PAGES: { path: string; priority: number }[] = [
   { path: "/about", priority: 0.7 },
   { path: "/pricing", priority: 0.8 },
   { path: "/case-studies", priority: 0.8 },
+  { path: "/free-guide", priority: 0.7 },
   { path: "/reviews", priority: 0.6 },
   { path: "/roi-calculator", priority: 0.6 },
   { path: "/blog", priority: 0.7 },

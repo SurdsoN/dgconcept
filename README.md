@@ -65,10 +65,10 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
 ## Admin Dashboard (`/admin`)
 
 A password-protected page for publishing content without touching code —
-Blog Posts, Case Studies, and Reviews each get their own tab. Every action
-writes straight to this GitHub repo via the GitHub API, which triggers the
-same Vercel auto-deploy as any other push — no database, no separate CMS
-service.
+Blog Posts, Case Studies, Reviews, and Leads each get their own tab. Every
+action writes straight to this GitHub repo via the GitHub API, which
+triggers the same Vercel auto-deploy as any other push — no database, no
+separate CMS service.
 
 **Setup (required before `/admin` will work):**
 
@@ -88,11 +88,22 @@ service.
    - `ADMIN_SESSION_SECRET` — a long random string (e.g. run
      `openssl rand -hex 32`) used to sign the login session. Not a password
      you type in — just a secret the server uses internally.
-   - `RECAPTCHA_SECRET_KEY` — required for the public review form (see
-     "Reviews" below) to verify submissions server-side. Get it from the
-     same [reCAPTCHA admin console](https://www.google.com/recaptcha/admin)
-     entry as the site key in `src/lib/site-config.ts` — never commit this
-     one to the repo.
+   - `RECAPTCHA_SECRET_KEY` — required for the public review and lead-magnet
+     forms to verify submissions server-side. Get it from the same
+     [reCAPTCHA admin console](https://www.google.com/recaptcha/admin) entry
+     as the site key in `src/lib/site-config.ts` — never commit this one to
+     the repo.
+   - `GMAIL_USER` — required for the free-guide lead magnet (see "Free
+     Guide" below) to email the download link. The Gmail address to send
+     from, e.g. `omotoleronabanjo@gmail.com`.
+   - `GMAIL_APP_PASSWORD` — a 16-character
+     [App Password](https://myaccount.google.com/apppasswords) for that
+     Gmail account (requires 2-Step Verification to be turned on first) —
+     not the regular account password. Emails are sent through Gmail's own
+     SMTP rather than a transactional email API, since those require a
+     verified custom domain to send to third parties and this site doesn't
+     have one; Gmail's own sending limit (~500/day) is far more than a lead
+     magnet needs.
 3. Redeploy (or restart `npm run dev` locally) so the new environment
    variables take effect.
 
@@ -142,6 +153,19 @@ Reviews** with **Approve** and **Reject** buttons (Approve flips it to
 deletes it outright), and **Published Reviews** with a **Delete** button
 only — no editing a client's own words, just the option to take one down.
 
+**Free Guide (lead magnet):** `/free-guide` is a landing page offering "The
+Free Dropshipping Guide" PDF (`public/downloads/dgconcept-dropshipping-guide.pdf`)
+in exchange for a name and email, gated by reCAPTCHA. On submit,
+`POST /api/leads/submit` saves the lead as JSON to `src/content/leads/` and
+emails the download link via Gmail (`src/lib/mailer.ts` +
+`src/lib/emails/dropshipping-guide-email.ts`) — no third-party email service,
+no domain required. The **Leads** tab in `/admin` lists every submission
+with an **Export CSV** button and a **Delete** button per lead (e.g. to
+remove a bad entry or honor a removal request). To offer a different lead
+magnet later, drop a new PDF in `public/downloads/`, write a new email
+template alongside `dropshipping-guide-email.ts`, and point a new landing
+page's form at it.
+
 ## SEO
 
 `sitemap.xml` and `robots.txt` are generated automatically (Next.js
@@ -163,6 +187,8 @@ structured data URLs fall back to Vercel's own production URL automatically.
   accordion, slider) using Radix primitives
 - **Blog:** MDX files in `src/content/blog`, statically generated
 - **Forms:** Formspree + Google reCAPTCHA v2
+- **Transactional email:** Nodemailer over Gmail SMTP (`src/lib/mailer.ts`)
+  for the lead-magnet delivery email — no third-party ESP or domain needed
 - **Scheduling:** Calendly popup widget
 - **Live chat:** Tawk.to
 - **Free Website Audit:** `/audit` page, split into two independent calls so

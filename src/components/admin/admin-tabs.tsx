@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-type AdminTab = "blog" | "portfolio" | "reviews";
+type AdminTab = "blog" | "portfolio" | "reviews" | "leads";
 
 export function AdminTabs({
   active,
@@ -31,6 +31,9 @@ export function AdminTabs({
             {pendingReviewCount}
           </span>
         )}
+      </Link>
+      <Link href="/admin?tab=leads" className={tabClass("leads")}>
+        Leads
       </Link>
     </div>
   );

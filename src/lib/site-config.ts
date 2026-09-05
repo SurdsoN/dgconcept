@@ -68,6 +68,7 @@ export const siteConfig = {
       { label: "About Us", href: "/about" },
     ],
     tools: [
+      { label: "Free Dropshipping Guide", href: "/free-guide" },
       { label: "Free Website Audit", href: "/audit" },
       { label: "ROI Calculator", href: "/roi-calculator" },
       { label: "Reviews", href: "/reviews" },
