@@ -111,22 +111,27 @@ choose a JPG, PNG, WEBP, or GIF up to 3MB and it's committed to
 automatic stock photo for that post only. Leave it alone and the post keeps
 using the automatic photo.
 
-**Editing a published post:** click **Edit** next to any post under
-"Published Posts" — it loads that post's current title, excerpt, tags,
-image, and content (read straight from GitHub, so it always reflects the
-latest saved version even if a previous edit hasn't finished deploying
+**Editing or deleting a published post:** click **Edit** next to any post
+under "Published Posts" — it loads that post's current title, excerpt,
+tags, image, and content (read straight from GitHub, so it always reflects
+the latest saved version even if a previous edit hasn't finished deploying
 yet) back into the form. The URL slug is locked while editing — renaming a
 post's URL isn't supported, since it would break any links already pointing
 at the old one. Hit **Update Post** to commit the change; **Cancel** returns
-to a blank "new post" form without saving anything.
+to a blank "new post" form without saving anything. **Delete** removes the
+post's file from the repo after a confirmation prompt — this can't be
+undone.
 
 **Case Studies:** switch to the **Case Studies** tab, fill in the project
 name, category (type a new one or pick an existing one from the
 suggestions), excerpt, an optional live preview URL, and attach one or more
-images — the first becomes the card thumbnail. Publishing commits a JSON
-record to `src/content/case-studies/<slug>.json` plus the uploaded images
-to `public/images/case-studies/`, and it appears on `/case-studies`
-immediately (once deployed).
+images — the first becomes the card thumbnail. The URL slug is generated
+automatically from the project name, same as the blog. Publishing commits a
+JSON record to `src/content/case-studies/<slug>.json` plus the uploaded
+images to `public/images/case-studies/`, and it appears on `/case-studies`
+immediately (once deployed). **Edit** and **Delete** work the same way as
+for blog posts — editing lets you swap the excerpt, category, live URL, or
+images (remove any existing one, add new ones) without touching the slug.
 
 **Reviews:** clients can submit a review themselves at `/reviews` (name,
 optional company, star rating, and a short quote, gated by a reCAPTCHA

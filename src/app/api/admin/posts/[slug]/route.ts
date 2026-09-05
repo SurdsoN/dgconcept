@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import matter from "gray-matter";
 import { ADMIN_COOKIE_NAME, isSessionTokenValid } from "@/lib/admin-auth";
-import { getFileFromGitHub, upsertFileOnGitHub } from "@/lib/github-publish";
+import { deleteFileOnGitHub, getFileFromGitHub, upsertFileOnGitHub } from "@/lib/github-publish";
 import { parsePostPayload } from "@/lib/post-payload";
 import { SLUG_PATTERN } from "@/lib/slug";
 
@@ -100,6 +100,39 @@ export async function PUT(
     console.error("Failed to update blog post", error);
     return NextResponse.json(
       { error: "Something went wrong updating the post. Check server logs for details." },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> },
+) {
+  if (!(await isAuthed())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { slug } = await params;
+  if (!SLUG_PATTERN.test(slug)) {
+    return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+  }
+
+  const path = `src/content/blog/${slug}.mdx`;
+
+  try {
+    const existing = await getFileFromGitHub(path);
+    if (!existing) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    await deleteFileOnGitHub(path, existing.sha, `Delete blog post: ${slug}`);
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Failed to delete blog post", error);
+    return NextResponse.json(
+      { error: "Something went wrong deleting the post. Check server logs for details." },
       { status: 500 },
     );
   }

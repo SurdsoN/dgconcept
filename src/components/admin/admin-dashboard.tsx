@@ -33,6 +33,7 @@ export function AdminDashboard({
   const [mode, setMode] = useState<"create" | "edit">("create");
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [loadingEditSlug, setLoadingEditSlug] = useState<string | null>(null);
+  const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -136,6 +137,30 @@ export function AdminDashboard({
       setMessage("Network error loading that post.");
     } finally {
       setLoadingEditSlug(null);
+    }
+  };
+
+  const handleDeleteClick = async (postSlug: string) => {
+    if (!window.confirm(`Delete "${postSlug}"? This can't be undone.`)) return;
+
+    setDeletingSlug(postSlug);
+    setStatus("idle");
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/admin/posts/${postSlug}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStatus("error");
+        setMessage(data.error ?? "Could not delete that post.");
+        return;
+      }
+      if (mode === "edit" && editingSlug === postSlug) resetFields();
+      router.refresh();
+    } catch {
+      setStatus("error");
+      setMessage("Network error — please try again.");
+    } finally {
+      setDeletingSlug(null);
     }
   };
 
@@ -457,15 +482,26 @@ export function AdminDashboard({
                     /blog/{post.slug} — {post.date}
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEditClick(post.slug)}
-                  disabled={loadingEditSlug === post.slug}
-                >
-                  {loadingEditSlug === post.slug ? "Loading..." : "Edit"}
-                </Button>
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditClick(post.slug)}
+                    disabled={loadingEditSlug === post.slug || deletingSlug === post.slug}
+                  >
+                    {loadingEditSlug === post.slug ? "Loading..." : "Edit"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteClick(post.slug)}
+                    disabled={deletingSlug === post.slug || loadingEditSlug === post.slug}
+                  >
+                    {deletingSlug === post.slug ? "Deleting..." : "Delete"}
+                  </Button>
+                </div>
               </Card>
             ))}
             {posts.length === 0 && (

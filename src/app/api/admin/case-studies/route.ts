@@ -3,12 +3,9 @@ import { cookies } from "next/headers";
 import { ADMIN_COOKIE_NAME, isSessionTokenValid } from "@/lib/admin-auth";
 import { getFileFromGitHub, upsertFileOnGitHub } from "@/lib/github-publish";
 import { slugify, SLUG_PATTERN } from "@/lib/slug";
+import { CASE_STUDY_IMAGE_PATH_PATTERN as IMAGE_PATH_PATTERN } from "@/lib/case-study-image-path";
 
 export const runtime = "nodejs";
-
-// Only accept image paths this same admin's upload-image route could have
-// produced — not an arbitrary attacker-supplied path.
-const IMAGE_PATH_PATTERN = /^\/images\/case-studies\/[a-z0-9-]+\.(jpg|jpeg|png|webp|gif)$/i;
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
