@@ -2,11 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { slugify } from "@/lib/slug";
+import { getPostImageUrl } from "@/lib/blog-image";
 import type { PostMeta } from "@/lib/blog";
 
 function todayIso(): string {
@@ -69,6 +72,11 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
     router.refresh();
   };
 
+  const tagList = tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
   return (
     <section className="py-16 lg:py-20">
       <div className="container-page max-w-3xl">
@@ -112,6 +120,27 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
                 required
               />
             </div>
+
+            {slug && (
+              <div>
+                <p className="mb-1.5 text-sm font-medium text-ink">Featured Image</p>
+                <div className="relative h-40 w-full overflow-hidden rounded-xl">
+                  <Image
+                    src={getPostImageUrl(slug, 800, 420)}
+                    alt=""
+                    fill
+                    sizes="700px"
+                    className="object-cover"
+                  />
+                </div>
+                <p className="mt-1.5 text-xs text-muted">
+                  Automatically picked from free stock photography based on the
+                  slug above — every post gets a consistent photo with nothing
+                  to upload. Changing the slug changes the photo.
+                </p>
+              </div>
+            )}
+
             <div>
               <label htmlFor="post-excerpt" className="mb-1.5 block text-sm font-medium text-ink">
                 Excerpt
@@ -154,6 +183,21 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="shopify, seo, conversion"
               />
+              <p className="mt-1.5 text-xs text-muted">
+                The first tag becomes the post&apos;s category badge; all of
+                them show as pills under the article and decide which posts
+                appear under &quot;Related Articles&quot;.
+              </p>
+              {tagList.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Badge variant="brand">{tagList[0]}</Badge>
+                  {tagList.slice(1).map((tag) => (
+                    <Badge key={tag} variant="outline">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
             <div>
               <label htmlFor="post-content" className="mb-1.5 block text-sm font-medium text-ink">
@@ -168,6 +212,11 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
                 placeholder={"Write the post in Markdown...\n\n## A heading\n\nA paragraph."}
                 required
               />
+              <p className="mt-1.5 text-xs text-muted">
+                Every <code>##</code> and <code>###</code> heading here
+                automatically becomes an entry in the post&apos;s &quot;On This
+                Page&quot; jump-to-section menu.
+              </p>
             </div>
 
             {message && (
@@ -190,7 +239,16 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
           </p>
           <div className="mt-4 space-y-2">
             {posts.map((post) => (
-              <Card key={post.slug} className="flex items-center justify-between p-4">
+              <Card key={post.slug} className="flex items-center gap-3 p-4">
+                <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg">
+                  <Image
+                    src={getPostImageUrl(post.slug, 128, 96)}
+                    alt=""
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-ink">{post.title}</p>
                   <p className="text-xs text-muted">
