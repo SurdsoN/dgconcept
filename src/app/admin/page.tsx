@@ -3,9 +3,11 @@ import { cookies } from "next/headers";
 import { ADMIN_COOKIE_NAME, isSessionTokenValid } from "@/lib/admin-auth";
 import { getAllPosts } from "@/lib/blog";
 import { getAllCaseStudies, getCaseStudyCategories } from "@/lib/case-studies";
+import { getPendingReviews } from "@/lib/reviews";
 import { AdminLogin } from "@/components/admin/admin-login";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
 import { CaseStudyDashboard } from "@/components/admin/case-study-dashboard";
+import { ReviewDashboard } from "@/components/admin/review-dashboard";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -25,6 +27,11 @@ export default async function AdminPage({
   }
 
   const { tab } = await searchParams;
+  const pendingReviews = getPendingReviews();
+
+  if (tab === "reviews") {
+    return <ReviewDashboard reviews={pendingReviews} />;
+  }
 
   if (tab === "portfolio") {
     const caseStudies = getAllCaseStudies();
@@ -32,9 +39,10 @@ export default async function AdminPage({
       <CaseStudyDashboard
         caseStudies={caseStudies}
         categories={getCaseStudyCategories(caseStudies)}
+        pendingReviewCount={pendingReviews.length}
       />
     );
   }
 
-  return <AdminDashboard posts={getAllPosts()} />;
+  return <AdminDashboard posts={getAllPosts()} pendingReviewCount={pendingReviews.length} />;
 }

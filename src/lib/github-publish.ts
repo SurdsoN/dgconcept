@@ -70,3 +70,17 @@ export async function upsertFileOnGitHub(
     throw new Error(`GitHub publish failed (${res.status}): ${await res.text()}`);
   }
 }
+
+// Deletes a file — requires its current sha (from getFileFromGitHub), same
+// as an update.
+export async function deleteFileOnGitHub(path: string, sha: string, message: string): Promise<void> {
+  const { token, repo, branch } = getConfig();
+  const res = await fetch(`${GITHUB_API}/repos/${repo}/contents/${path}`, {
+    method: "DELETE",
+    headers: { ...githubHeaders(token), "Content-Type": "application/json" },
+    body: JSON.stringify({ message, sha, branch }),
+  });
+  if (!res.ok) {
+    throw new Error(`GitHub delete failed (${res.status}): ${await res.text()}`);
+  }
+}

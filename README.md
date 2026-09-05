@@ -62,12 +62,13 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
   consistent photo per post (seeded from its slug). Swap in a real photo
   per post later by pointing `getPostImageUrl` at your own image instead.
 
-## Blog Admin (`/admin`)
+## Admin Dashboard (`/admin`)
 
-A password-protected page for publishing new blog posts without touching
-code. It writes a new `.mdx` file straight to this GitHub repo via the
-GitHub API, which triggers the same Vercel auto-deploy as any other push —
-no database, no separate CMS service.
+A password-protected page for publishing content without touching code —
+Blog Posts, Case Studies, and Reviews each get their own tab. Every action
+writes straight to this GitHub repo via the GitHub API, which triggers the
+same Vercel auto-deploy as any other push — no database, no separate CMS
+service.
 
 **Setup (required before `/admin` will work):**
 
@@ -87,10 +88,15 @@ no database, no separate CMS service.
    - `ADMIN_SESSION_SECRET` — a long random string (e.g. run
      `openssl rand -hex 32`) used to sign the login session. Not a password
      you type in — just a secret the server uses internally.
+   - `RECAPTCHA_SECRET_KEY` — required for the public review form (see
+     "Reviews" below) to verify submissions server-side. Get it from the
+     same [reCAPTCHA admin console](https://www.google.com/recaptcha/admin)
+     entry as the site key in `src/lib/site-config.ts` — never commit this
+     one to the repo.
 3. Redeploy (or restart `npm run dev` locally) so the new environment
    variables take effect.
 
-**Using it:** go to `/admin`, log in with `ADMIN_PASSWORD`, fill in the
+**Blog Posts:** go to `/admin`, log in with `ADMIN_PASSWORD`, fill in the
 title, excerpt, date, author, optional comma-separated tags, and Markdown
 content, and hit Publish. The
 post is committed to `src/content/blog/<slug>.mdx` on the deployed branch
@@ -113,6 +119,21 @@ yet) back into the form. The URL slug is locked while editing — renaming a
 post's URL isn't supported, since it would break any links already pointing
 at the old one. Hit **Update Post** to commit the change; **Cancel** returns
 to a blank "new post" form without saving anything.
+
+**Case Studies:** switch to the **Case Studies** tab, fill in the project
+name, category (type a new one or pick an existing one from the
+suggestions), excerpt, an optional live preview URL, and attach one or more
+images — the first becomes the card thumbnail. Publishing commits a JSON
+record to `src/content/case-studies/<slug>.json` plus the uploaded images
+to `public/images/case-studies/`, and it appears on `/case-studies`
+immediately (once deployed).
+
+**Reviews:** clients can submit a review themselves at `/reviews` (name,
+optional company, star rating, and a short quote, gated by a reCAPTCHA
+checkbox) — it's committed as a *pending* record, not shown publicly yet.
+The **Reviews** tab (badge shows the pending count) lists every pending
+submission with **Approve** and **Reject** buttons: Approve flips it to
+`approved` so it shows up on `/reviews`; Reject deletes it outright.
 
 ## SEO
 

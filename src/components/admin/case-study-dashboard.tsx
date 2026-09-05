@@ -19,9 +19,11 @@ const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 export function CaseStudyDashboard({
   caseStudies,
   categories,
+  pendingReviewCount = 0,
 }: {
   caseStudies: CaseStudy[];
   categories: string[];
+  pendingReviewCount?: number;
 }) {
   const router = useRouter();
 
@@ -165,7 +167,7 @@ export function CaseStudyDashboard({
   return (
     <section className="py-16 lg:py-20">
       <div className="container-page max-w-3xl">
-        <AdminTabs active="portfolio" />
+        <AdminTabs active="portfolio" pendingReviewCount={pendingReviewCount} />
 
         <div className="flex items-start justify-between gap-4">
           <div>

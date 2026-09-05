@@ -21,7 +21,13 @@ function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
+export function AdminDashboard({
+  posts,
+  pendingReviewCount = 0,
+}: {
+  posts: PostMeta[];
+  pendingReviewCount?: number;
+}) {
   const router = useRouter();
 
   const [mode, setMode] = useState<"create" | "edit">("create");
@@ -219,7 +225,7 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
   return (
     <section className="py-16 lg:py-20">
       <div className="container-page max-w-3xl">
-        <AdminTabs active="blog" />
+        <AdminTabs active="blog" pendingReviewCount={pendingReviewCount} />
         <div className="flex items-start justify-between gap-4">
           <div>
             {mode === "edit" && (

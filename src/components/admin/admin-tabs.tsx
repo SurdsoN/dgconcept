@@ -1,7 +1,15 @@
 import Link from "next/link";
 
-export function AdminTabs({ active }: { active: "blog" | "portfolio" }) {
-  const tabClass = (tab: "blog" | "portfolio") =>
+type AdminTab = "blog" | "portfolio" | "reviews";
+
+export function AdminTabs({
+  active,
+  pendingReviewCount = 0,
+}: {
+  active: AdminTab;
+  pendingReviewCount?: number;
+}) {
+  const tabClass = (tab: AdminTab) =>
     `border-b-2 pb-3 text-sm font-medium transition-colors ${
       active === tab
         ? "border-brand text-brand"
@@ -15,6 +23,14 @@ export function AdminTabs({ active }: { active: "blog" | "portfolio" }) {
       </Link>
       <Link href="/admin?tab=portfolio" className={tabClass("portfolio")}>
         Case Studies
+      </Link>
+      <Link href="/admin?tab=reviews" className={tabClass("reviews")}>
+        Reviews
+        {pendingReviewCount > 0 && (
+          <span className="ml-1.5 rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-semibold text-white">
+            {pendingReviewCount}
+          </span>
+        )}
       </Link>
     </div>
   );

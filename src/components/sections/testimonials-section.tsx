@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { SectionHeading } from "./section-heading";
@@ -58,6 +59,14 @@ export function TestimonialsSection({ id }: { id?: string }) {
             </p>
           </Card>
         </div>
+
+        <p className="mt-8 text-center text-sm text-muted">
+          Worked with DgConcept?{" "}
+          <Link href="/reviews" className="font-medium text-brand hover:underline">
+            Read more reviews or leave your own
+          </Link>
+          .
+        </p>
       </div>
     </section>
   );
