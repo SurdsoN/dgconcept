@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { slugify } from "@/lib/slug";
 import { resolvePostImage } from "@/lib/blog-image";
+import { readFileAsDataUrl } from "@/lib/read-file-as-data-url";
+import { AdminTabs } from "@/components/admin/admin-tabs";
 import type { PostMeta } from "@/lib/blog";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -17,15 +19,6 @@ const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
-}
-
-function readFileAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
 }
 
 export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
@@ -159,7 +152,12 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
         const uploadRes = await fetch("/api/admin/upload-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ slug, mimeType: imageFile.type, contentBase64: dataUrl }),
+          body: JSON.stringify({
+            folder: "blog",
+            slug,
+            mimeType: imageFile.type,
+            contentBase64: dataUrl,
+          }),
         });
         const uploadData = await uploadRes.json().catch(() => ({}));
         if (!uploadRes.ok) {
@@ -221,6 +219,7 @@ export function AdminDashboard({ posts }: { posts: PostMeta[] }) {
   return (
     <section className="py-16 lg:py-20">
       <div className="container-page max-w-3xl">
+        <AdminTabs active="blog" />
         <div className="flex items-start justify-between gap-4">
           <div>
             {mode === "edit" && (

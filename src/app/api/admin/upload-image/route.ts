@@ -15,6 +15,9 @@ const EXTENSION_BY_MIME: Record<string, string> = {
   "image/gif": "gif",
 };
 
+const ALLOWED_FOLDERS = ["blog", "case-studies"] as const;
+type AllowedFolder = (typeof ALLOWED_FOLDERS)[number];
+
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   if (!isSessionTokenValid(cookieStore.get(ADMIN_COOKIE_NAME)?.value)) {
@@ -28,10 +31,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { slug, mimeType, contentBase64 } = (body ?? {}) as Record<string, unknown>;
+  const { folder, slug, index, mimeType, contentBase64 } = (body ?? {}) as Record<string, unknown>;
 
+  if (typeof folder !== "string" || !ALLOWED_FOLDERS.includes(folder as AllowedFolder)) {
+    return NextResponse.json({ error: "Invalid folder" }, { status: 400 });
+  }
   if (typeof slug !== "string" || !SLUG_PATTERN.test(slug)) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+  }
+  if (index !== undefined && (typeof index !== "number" || !Number.isInteger(index) || index < 0)) {
+    return NextResponse.json({ error: "Invalid index" }, { status: 400 });
   }
   if (typeof mimeType !== "string" || !(mimeType in EXTENSION_BY_MIME)) {
     return NextResponse.json(
@@ -50,20 +59,16 @@ export async function POST(request: NextRequest) {
   }
 
   const ext = EXTENSION_BY_MIME[mimeType];
-  const path = `public/images/blog/${slug}.${ext}`;
+  const filename = index !== undefined ? `${slug}-${index}.${ext}` : `${slug}.${ext}`;
+  const path = `public/images/${folder}/${filename}`;
 
   try {
     const existing = await getFileFromGitHub(path);
-    await upsertFileOnGitHub(
-      path,
-      base64,
-      `Add featured image for blog post: ${slug}`,
-      existing?.sha,
-    );
+    await upsertFileOnGitHub(path, base64, `Add image: ${filename}`, existing?.sha);
 
-    return NextResponse.json({ path: `/images/blog/${slug}.${ext}` });
+    return NextResponse.json({ path: `/images/${folder}/${filename}` });
   } catch (error) {
-    console.error("Failed to upload blog post image", error);
+    console.error("Failed to upload image", error);
     return NextResponse.json(
       { error: "Something went wrong uploading the image. Check server logs for details." },
       { status: 500 },
