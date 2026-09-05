@@ -2,18 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Star, Check, X } from "lucide-react";
+import { Star, Check, X, Trash2, BadgeCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AdminTabs } from "@/components/admin/admin-tabs";
 import type { Review } from "@/lib/reviews";
 
-export function ReviewDashboard({ reviews }: { reviews: Review[] }) {
+export function ReviewDashboard({
+  reviews,
+  approvedReviews,
+}: {
+  reviews: Review[];
+  approvedReviews: Review[];
+}) {
   const router = useRouter();
   const [pendingSlug, setPendingSlug] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleDecision = async (slug: string, decision: "approve" | "reject") => {
+  const handleDecision = async (slug: string, decision: "approve" | "reject" | "delete") => {
     setPendingSlug(slug);
     setError(null);
     try {
@@ -31,6 +37,13 @@ export function ReviewDashboard({ reviews }: { reviews: Review[] }) {
       setError("Network error — please try again.");
       setPendingSlug(null);
     }
+  };
+
+  const handleDeletePublished = async (review: Review) => {
+    if (!window.confirm(`Delete the live review from "${review.name}"? This can't be undone.`)) {
+      return;
+    }
+    await handleDecision(review.slug, "delete");
   };
 
   const handleLogout = async () => {
@@ -104,6 +117,52 @@ export function ReviewDashboard({ reviews }: { reviews: Review[] }) {
           {reviews.length === 0 && (
             <p className="text-sm text-muted">No pending reviews right now.</p>
           )}
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-lg font-semibold text-ink">Published Reviews</h2>
+          <p className="mt-1 text-xs text-muted">
+            Live on /reviews. Delete removes one for good — there&apos;s no
+            edit option since it&apos;s a client&apos;s own words.
+          </p>
+          <div className="mt-4 space-y-4">
+            {approvedReviews.map((review) => (
+              <Card key={review.slug} className="p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex gap-0.5 text-accent">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-current" />
+                      ))}
+                    </div>
+                    <p className="mt-3 text-sm leading-relaxed text-ink">
+                      &ldquo;{review.quote}&rdquo;
+                    </p>
+                    <div className="mt-3 flex items-center gap-1.5">
+                      <p className="text-sm font-semibold text-ink">{review.name}</p>
+                      <BadgeCheck className="h-3.5 w-3.5 text-emerald-600" />
+                    </div>
+                    {review.company && (
+                      <p className="text-xs text-muted">{review.company}</p>
+                    )}
+                    <p className="text-xs text-muted">{review.date}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={pendingSlug === review.slug}
+                    onClick={() => handleDeletePublished(review)}
+                  >
+                    <Trash2 className="h-4 w-4" /> Delete
+                  </Button>
+                </div>
+              </Card>
+            ))}
+            {approvedReviews.length === 0 && (
+              <p className="text-sm text-muted">No published reviews yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </section>

@@ -136,9 +136,11 @@ images (remove any existing one, add new ones) without touching the slug.
 **Reviews:** clients can submit a review themselves at `/reviews` (name,
 optional company, star rating, and a short quote, gated by a reCAPTCHA
 checkbox) — it's committed as a *pending* record, not shown publicly yet.
-The **Reviews** tab (badge shows the pending count) lists every pending
-submission with **Approve** and **Reject** buttons: Approve flips it to
-`approved` so it shows up on `/reviews`; Reject deletes it outright.
+The **Reviews** tab (badge shows the pending count) has two lists: **Pending
+Reviews** with **Approve** and **Reject** buttons (Approve flips it to
+`approved` so it shows up on `/reviews` with a "Verified" badge; Reject
+deletes it outright), and **Published Reviews** with a **Delete** button
+only — no editing a client's own words, just the option to take one down.
 
 ## SEO
 

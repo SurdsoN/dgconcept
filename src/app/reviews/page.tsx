@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Star } from "lucide-react";
+import { Star, BadgeCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ReviewForm } from "@/components/review-form";
@@ -45,7 +45,15 @@ export default function ReviewsPage() {
                     &ldquo;{review.quote}&rdquo;
                   </p>
                   <div className="mt-5">
-                    <p className="text-sm font-semibold text-ink">{review.name}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-semibold text-ink">{review.name}</p>
+                      <span
+                        className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
+                        title="Submitted and approved as a genuine client review"
+                      >
+                        <BadgeCheck className="h-3 w-3" /> Verified
+                      </span>
+                    </div>
                     {review.company && (
                       <p className="text-xs text-muted">{review.company}</p>
                     )}
