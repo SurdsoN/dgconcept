@@ -65,7 +65,7 @@ purpose. Update them in **`src/lib/site-config.ts`** unless noted otherwise:
 ## Admin Dashboard (`/admin`)
 
 A password-protected page for publishing content without touching code —
-Blog Posts, Case Studies, Reviews, and Leads each get their own tab. Every
+Blog Posts, Case Studies, Reviews, Leads, and Access each get their own tab. Every
 action writes straight to this GitHub repo via the GitHub API, which
 triggers the same Vercel auto-deploy as any other push — no database, no
 separate CMS service.
@@ -166,16 +166,22 @@ magnet later, drop a new PDF in `public/downloads/`, write a new email
 template alongside `dropshipping-guide-email.ts`, and point a new landing
 page's form at it.
 
-**Country blocking:** `src/proxy.ts` (Next.js 16's replacement for
-`middleware.ts` — same idea, renamed file/export) blocks visitors from
-countries listed in `blockedCountries` in `src/lib/site-config.ts` (currently
-India, Pakistan, Nigeria) from `/free-guide`, its PDF, and
-`/api/leads/submit`, redirecting page visits to `/access-denied` and
-returning a 403 for the API. It uses `@vercel/functions`'
-`geolocation(request)`, which reads geolocation headers Vercel's edge network
-adds automatically — **this only works once deployed on Vercel**; there's no
-such header in local dev, so nothing is blocked when running `npm run dev`.
-To block additional pages, add them to the `matcher` array in `src/proxy.ts`.
+**Regional access (country blocking):** the **Access** tab in `/admin` lists
+the site's three free tools — Website Audit, ROI Calculator, and the
+Dropshipping Guide — each with a searchable country checklist. Checking a
+country restricts that tool for visitors from there; hit **Save Changes** to
+commit it to `src/content/settings/tool-access.json` (same GitHub-commit
+pattern as everything else in admin). `src/proxy.ts` (Next.js 16's
+replacement for `middleware.ts` — same idea, renamed file/export) reads that
+file at build time and, for a restricted visitor, redirects the tool's page
+to `/access-denied` and returns a 403 from any API route the page calls
+(blocking only the page would leave the API as a bypass). It uses
+`@vercel/functions`' `geolocation(request)`, which reads geolocation headers
+Vercel's edge network adds automatically — **this only works once deployed
+on Vercel**; there's no such header in local dev, so nothing is blocked when
+running `npm run dev`. To gate an additional tool, add it to `TOOLS` in
+`src/lib/tool-access.ts`, add its path(s) to `resolveTool()` in
+`src/proxy.ts`, and add those paths to the `matcher` array there too.
 
 ## SEO
 

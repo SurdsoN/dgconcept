@@ -48,12 +48,6 @@ export const siteConfig = {
   tawkPropertyId: "6a9a2009dda389344be7fef1",
   tawkWidgetId: "1k1l0q9ji",
 
-  // ISO 3166-1 alpha-2 country codes to block from gated pages (e.g. the
-  // free-guide lead magnet) — see src/proxy.ts. Only takes effect when
-  // deployed on Vercel, which is what supplies the geolocation data; it's a
-  // no-op in local dev.
-  blockedCountries: ["IN", "PK", "NG"],
-
   nav: [
     { label: "Home", href: "/" },
     { label: "Services", href: "/#services" },

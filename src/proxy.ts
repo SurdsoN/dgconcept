@@ -1,15 +1,44 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { geolocation } from "@vercel/functions";
-import { siteConfig } from "@/lib/site-config";
+import toolAccessData from "@/content/settings/tool-access.json";
+import type { ToolId } from "@/lib/tool-access";
 
-// Blocks visitors from countries in siteConfig.blockedCountries out of the
-// lead-magnet funnel (the landing page, a direct link to the PDF, and the
-// submission API — blocking only the page would leave the other two as an
-// easy bypass). Runs only on Vercel, which is what supplies geolocation.
+// Statically imported (not read via fs at request time) so the data is
+// baked into this file's own bundle at build time — proxy.ts runs in an
+// isolated environment that shouldn't rely on shared runtime modules.
+const toolAccess: Record<ToolId, string[]> = {
+  audit: toolAccessData.audit ?? [],
+  "roi-calculator": toolAccessData["roi-calculator"] ?? [],
+  "free-guide": toolAccessData["free-guide"] ?? [],
+};
+
+// Maps a request path to the tool whose restrictions (set from the admin
+// Access tab) govern it. Each tool blocks its page plus any API route(s)
+// that page calls, so blocking only the page wouldn't be a real block.
+function resolveTool(pathname: string): ToolId | null {
+  if (pathname === "/audit" || pathname === "/api/audit" || pathname === "/api/audit/speed") {
+    return "audit";
+  }
+  if (pathname === "/roi-calculator") {
+    return "roi-calculator";
+  }
+  if (
+    pathname === "/free-guide" ||
+    pathname === "/downloads/dgconcept-dropshipping-guide.pdf" ||
+    pathname === "/api/leads/submit"
+  ) {
+    return "free-guide";
+  }
+  return null;
+}
+
+// Runs only on Vercel, which is what supplies geolocation.
 export function proxy(request: NextRequest) {
+  const tool = resolveTool(request.nextUrl.pathname);
+  if (!tool) return NextResponse.next();
+
   const { country } = geolocation(request);
-  const blockedCountries: readonly string[] = siteConfig.blockedCountries;
-  if (!country || !blockedCountries.includes(country)) {
+  if (!country || !toolAccess[tool].includes(country)) {
     return NextResponse.next();
   }
 
@@ -24,5 +53,13 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/free-guide", "/downloads/dgconcept-dropshipping-guide.pdf", "/api/leads/submit"],
+  matcher: [
+    "/audit",
+    "/api/audit",
+    "/api/audit/speed",
+    "/roi-calculator",
+    "/free-guide",
+    "/downloads/dgconcept-dropshipping-guide.pdf",
+    "/api/leads/submit",
+  ],
 };
