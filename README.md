@@ -166,6 +166,17 @@ magnet later, drop a new PDF in `public/downloads/`, write a new email
 template alongside `dropshipping-guide-email.ts`, and point a new landing
 page's form at it.
 
+**Country blocking:** `src/proxy.ts` (Next.js 16's replacement for
+`middleware.ts` — same idea, renamed file/export) blocks visitors from
+countries listed in `blockedCountries` in `src/lib/site-config.ts` (currently
+India, Pakistan, Nigeria) from `/free-guide`, its PDF, and
+`/api/leads/submit`, redirecting page visits to `/access-denied` and
+returning a 403 for the API. It uses `@vercel/functions`'
+`geolocation(request)`, which reads geolocation headers Vercel's edge network
+adds automatically — **this only works once deployed on Vercel**; there's no
+such header in local dev, so nothing is blocked when running `npm run dev`.
+To block additional pages, add them to the `matcher` array in `src/proxy.ts`.
+
 ## SEO
 
 `sitemap.xml` and `robots.txt` are generated automatically (Next.js
