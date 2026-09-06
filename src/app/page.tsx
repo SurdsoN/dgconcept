@@ -207,28 +207,68 @@ export default function Home() {
 
       <TestimonialsSection id="testimonials" />
 
-      {/* Free audit CTA */}
+      {/* Free tools CTA */}
       <section className="py-20">
         <div className="container-page">
-          <Card className="mx-auto max-w-3xl p-8 text-center sm:p-12">
-            <Badge variant="brand" className="mx-auto mb-4">
-              Free Tool
-            </Badge>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">
-              Get a Free Website Audit
-            </h2>
-            <p className="mx-auto mt-3 max-w-lg text-sm text-muted">
-              Paste your website or Shopify store URL and get an instant
-              scan of your on-page SEO, crawlability, store policies, and
-              more — plus an optional full Lighthouse speed check, no
-              waiting on an email.
-            </p>
-            <div className="mt-6 flex justify-center">
-              <Button asChild size="lg">
-                <Link href="/audit">Run My Free Audit</Link>
-              </Button>
-            </div>
-          </Card>
+          <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <Card className="flex flex-col items-center p-8 text-center sm:p-10">
+              <Badge variant="brand" className="mb-4">
+                Free Tool
+              </Badge>
+              <h2 className="text-2xl font-bold text-ink">
+                Get a Free Website Audit
+              </h2>
+              <p className="mt-3 text-sm text-muted">
+                Paste your website or Shopify store URL and get an instant
+                scan of your on-page SEO, crawlability, store policies, and
+                more — plus an optional full Lighthouse speed check, no
+                waiting on an email.
+              </p>
+              <div className="mt-6">
+                <Button asChild size="lg">
+                  <Link href="/audit">Run My Free Audit</Link>
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="flex flex-col items-center p-8 text-center sm:p-10">
+              <Badge variant="brand" className="mb-4">
+                Free Tool
+              </Badge>
+              <h2 className="text-2xl font-bold text-ink">
+                Try the ROI Calculator
+              </h2>
+              <p className="mt-3 text-sm text-muted">
+                See how small improvements in conversion rate and average
+                order value can transform your website or Shopify store
+                revenue.
+              </p>
+              <div className="mt-6">
+                <Button asChild size="lg">
+                  <Link href="/roi-calculator">Calculate My Revenue</Link>
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="flex flex-col items-center p-8 text-center sm:p-10">
+              <Badge variant="brand" className="mb-4">
+                Free Guide
+              </Badge>
+              <h2 className="text-2xl font-bold text-ink">
+                Free Dropshipping Guide
+              </h2>
+              <p className="mt-3 text-sm text-muted">
+                A short, practical walkthrough of Shopify dropshipping —
+                what it is, the 5-step process, and what it actually takes
+                to succeed. Sent straight to your inbox.
+              </p>
+              <div className="mt-6">
+                <Button asChild size="lg">
+                  <Link href="/free-guide">Get the Free Guide</Link>
+                </Button>
+              </div>
+            </Card>
+          </div>
         </div>
       </section>
 
