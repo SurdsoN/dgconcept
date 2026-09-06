@@ -6,13 +6,7 @@
     "ID",
     "PK"
   ],
-  "roi-calculator": [
-    "NG",
-    "IN",
-    "ID",
-    "PK",
-    "YE"
-  ],
+  "roi-calculator": [],
   "free-guide": [
     "IN",
     "PK",
