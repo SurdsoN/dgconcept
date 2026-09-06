@@ -9,15 +9,13 @@ export function SiteFooter() {
     <footer className="bg-dark text-dark-muted">
       <div className="container-page grid gap-10 py-14 md:grid-cols-4">
         <div>
-          <div className="inline-block rounded-lg bg-white px-3 py-2">
-            <Image
-              src="/images/logo.png"
-              alt={siteConfig.name}
-              width={140}
-              height={40}
-              className="h-8 w-auto"
-            />
-          </div>
+          <Image
+            src="/images/logo-white.png"
+            alt={siteConfig.name}
+            width={140}
+            height={40}
+            className="h-8 w-auto"
+          />
           <p className="mt-4 max-w-xs text-sm leading-relaxed">
             We build fast, clean, conversion-focused websites and Shopify
             stores for founders and businesses worldwide.
