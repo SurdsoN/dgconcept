@@ -1,5 +1,23 @@
 {
-  "audit": [],
-  "roi-calculator": [],
-  "free-guide": ["IN", "PK", "NG"]
+  "audit": [
+    "YE",
+    "NG",
+    "IN",
+    "ID",
+    "PK"
+  ],
+  "roi-calculator": [
+    "NG",
+    "IN",
+    "ID",
+    "PK",
+    "YE"
+  ],
+  "free-guide": [
+    "IN",
+    "PK",
+    "NG",
+    "YE",
+    "ID"
+  ]
 }
