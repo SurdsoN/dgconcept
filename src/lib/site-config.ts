@@ -78,7 +78,6 @@ export const siteConfig = {
       { label: "Free Website Audit", href: "/audit" },
       { label: "ROI Calculator", href: "/roi-calculator" },
       { label: "Reviews", href: "/reviews" },
-      { label: "FAQ", href: "/#faq" },
       { label: "Contact", href: "/contact" },
     ],
   },
