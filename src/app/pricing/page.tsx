@@ -4,6 +4,7 @@ import { Check, Rocket, TrendingUp, Crown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AnimateIn } from "@/components/animate-in";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { FaqSection } from "@/components/sections/faq-section";
 import { CtaBanner } from "@/components/sections/cta-banner";
@@ -42,53 +43,55 @@ export default function PricingPage() {
 
       <section className="py-16">
         <div className="container-page grid gap-6 lg:grid-cols-3">
-          {pricingTiers.map((tier) => {
+          {pricingTiers.map((tier, i) => {
             const Icon = tierIcons[tier.key as keyof typeof tierIcons];
             return (
-              <Card
-                key={tier.key}
-                className={
-                  tier.featured
-                    ? "relative border-2 border-brand p-6 shadow-lg lg:-translate-y-3"
-                    : "p-6"
-                }
-              >
-                {tier.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-4 py-1 text-xs font-semibold text-white">
-                    {tier.badge}
-                  </span>
-                )}
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                  <Icon className="h-5 w-5 text-brand" />
-                </div>
-                <h2 className="mt-4 text-xl font-bold text-ink">{tier.name}</h2>
-                <p className="mt-2 text-sm text-muted">{tier.tagline}</p>
-
-                <div className="mt-6 rounded-xl bg-surface-muted p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-                    Investment
-                  </p>
-                  <p className="mt-1 text-2xl font-bold text-ink">Custom Quote</p>
-                  <p className="text-xs text-muted">Tailored after a short call</p>
-                </div>
-
-                <Button
-                  asChild
-                  variant={tier.featured ? "primary" : "outline"}
-                  className="mt-6 w-full"
+              <AnimateIn key={tier.key} delay={i * 80} className="h-full">
+                <Card
+                  hover
+                  className={
+                    tier.featured
+                      ? "relative h-full border-2 border-brand p-6 shadow-lg lg:-translate-y-3"
+                      : "h-full p-6"
+                  }
                 >
-                  <Link href="/contact">{tier.cta} →</Link>
-                </Button>
+                  {tier.badge && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-4 py-1 text-xs font-semibold text-white">
+                      {tier.badge}
+                    </span>
+                  )}
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+                    <Icon className="h-5 w-5 text-brand" />
+                  </div>
+                  <h2 className="mt-4 text-xl font-bold text-ink">{tier.name}</h2>
+                  <p className="mt-2 text-sm text-muted">{tier.tagline}</p>
 
-                <ul className="mt-6 space-y-3 text-sm">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                      <span className="text-ink">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
+                  <div className="mt-6 rounded-xl bg-surface-muted p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+                      Investment
+                    </p>
+                    <p className="mt-1 text-2xl font-bold text-ink">Custom Quote</p>
+                    <p className="text-xs text-muted">Tailored after a short call</p>
+                  </div>
+
+                  <Button
+                    asChild
+                    variant={tier.featured ? "primary" : "outline"}
+                    className="mt-6 w-full"
+                  >
+                    <Link href="/contact">{tier.cta} →</Link>
+                  </Button>
+
+                  <ul className="mt-6 space-y-3 text-sm">
+                    {tier.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                        <span className="text-ink">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              </AnimateIn>
             );
           })}
         </div>

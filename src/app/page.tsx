@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { AnimateIn } from "@/components/animate-in";
 import { CalendlyButton } from "@/components/integrations/calendly-button";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { FaqSection } from "@/components/sections/faq-section";
@@ -64,7 +65,7 @@ export default function Home() {
       {/* Hero */}
       <section className="bg-surface-muted">
         <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-[minmax(0,1fr)_320px] lg:py-24">
-          <div>
+          <AnimateIn>
             <Badge variant="brand" className="mb-5">
               Shopify Partner · Web Architect
             </Badge>
@@ -100,9 +101,12 @@ export default function Home() {
                 Book a Call
               </CalendlyButton>
             </div>
-          </div>
+          </AnimateIn>
 
-          <div className="relative mx-auto aspect-square w-56 overflow-hidden rounded-full border-4 border-brand shadow-lg sm:w-72 lg:w-full">
+          <AnimateIn
+            delay={150}
+            className="relative mx-auto aspect-square w-56 overflow-hidden rounded-full border-4 border-brand shadow-lg sm:w-72 lg:w-full"
+          >
             <Image
               src="/images/founder-headshot.jpg"
               alt={siteConfig.founder}
@@ -111,19 +115,21 @@ export default function Home() {
               className="object-cover"
               priority
             />
-          </div>
+          </AnimateIn>
         </div>
       </section>
 
       {/* Stats */}
       <section className="py-16">
         <div className="container-page grid gap-5 sm:grid-cols-3">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="flex flex-col items-center gap-2 p-8 text-center">
-              <stat.icon className="h-7 w-7 text-brand" />
-              <p className="text-3xl font-bold text-ink">{stat.value}</p>
-              <p className="text-sm text-muted">{stat.label}</p>
-            </Card>
+          {stats.map((stat, i) => (
+            <AnimateIn key={stat.label} delay={i * 80}>
+              <Card hover className="flex flex-col items-center gap-2 p-8 text-center">
+                <stat.icon className="h-7 w-7 text-brand" />
+                <p className="text-3xl font-bold text-ink">{stat.value}</p>
+                <p className="text-sm text-muted">{stat.label}</p>
+              </Card>
+            </AnimateIn>
           ))}
         </div>
       </section>
@@ -137,18 +143,20 @@ export default function Home() {
             description="Specialized skills focused on one outcome: a site that grows your business."
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((service) => (
-              <Card key={service.title} className="p-6">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                  <service.icon className="h-5 w-5 text-brand" />
-                </div>
-                <h3 className="mt-4 text-base font-semibold text-ink">
-                  {service.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {service.description}
-                </p>
-              </Card>
+            {services.map((service, i) => (
+              <AnimateIn key={service.title} delay={i * 80}>
+                <Card hover className="h-full p-6">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+                    <service.icon className="h-5 w-5 text-brand" />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-ink">
+                    {service.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {service.description}
+                  </p>
+                </Card>
+              </AnimateIn>
             ))}
           </div>
         </div>
@@ -163,10 +171,10 @@ export default function Home() {
             description="A sample of real projects and results — full case studies below."
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            {portfolioPreview.map((project) => {
+            {portfolioPreview.map((project, i) => {
               const href = project.liveUrl ?? project.flickrUrl;
               const card = (
-                <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+                <Card hover className="h-full overflow-hidden">
                   <div className="relative h-40 w-full">
                     <Image
                       src={project.images[0]}
@@ -186,12 +194,16 @@ export default function Home() {
                   </div>
                 </Card>
               );
-              return href ? (
-                <a key={project.slug} href={href} target="_blank" rel="noopener noreferrer">
-                  {card}
-                </a>
-              ) : (
-                <div key={project.slug}>{card}</div>
+              return (
+                <AnimateIn key={project.slug} delay={i * 80}>
+                  {href ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </AnimateIn>
               );
             })}
           </div>
@@ -211,63 +223,69 @@ export default function Home() {
       <section className="py-20">
         <div className="container-page">
           <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <Card className="flex flex-col items-center p-8 text-center sm:p-10">
-              <Badge variant="brand" className="mb-4">
-                Free Tool
-              </Badge>
-              <h2 className="text-2xl font-bold text-ink">
-                Get a Free Website Audit
-              </h2>
-              <p className="mt-3 text-sm text-muted">
-                Paste your website or Shopify store URL and get an instant
-                scan of your on-page SEO, crawlability, store policies, and
-                more — plus an optional full Lighthouse speed check, no
-                waiting on an email.
-              </p>
-              <div className="mt-6">
-                <Button asChild size="lg">
-                  <Link href="/audit">Run My Free Audit</Link>
-                </Button>
-              </div>
-            </Card>
+            <AnimateIn delay={0}>
+              <Card hover className="flex h-full flex-col items-center p-8 text-center sm:p-10">
+                <Badge variant="brand" className="mb-4">
+                  Free Tool
+                </Badge>
+                <h2 className="text-2xl font-bold text-ink">
+                  Get a Free Website Audit
+                </h2>
+                <p className="mt-3 text-sm text-muted">
+                  Paste your website or Shopify store URL and get an instant
+                  scan of your on-page SEO, crawlability, store policies, and
+                  more — plus an optional full Lighthouse speed check, no
+                  waiting on an email.
+                </p>
+                <div className="mt-6">
+                  <Button asChild size="lg">
+                    <Link href="/audit">Run My Free Audit</Link>
+                  </Button>
+                </div>
+              </Card>
+            </AnimateIn>
 
-            <Card className="flex flex-col items-center p-8 text-center sm:p-10">
-              <Badge variant="brand" className="mb-4">
-                Free Tool
-              </Badge>
-              <h2 className="text-2xl font-bold text-ink">
-                Try the ROI Calculator
-              </h2>
-              <p className="mt-3 text-sm text-muted">
-                See how small improvements in conversion rate and average
-                order value can transform your website or Shopify store
-                revenue.
-              </p>
-              <div className="mt-6">
-                <Button asChild size="lg">
-                  <Link href="/roi-calculator">Calculate My Revenue</Link>
-                </Button>
-              </div>
-            </Card>
+            <AnimateIn delay={80}>
+              <Card hover className="flex h-full flex-col items-center p-8 text-center sm:p-10">
+                <Badge variant="brand" className="mb-4">
+                  Free Tool
+                </Badge>
+                <h2 className="text-2xl font-bold text-ink">
+                  Try the ROI Calculator
+                </h2>
+                <p className="mt-3 text-sm text-muted">
+                  See how small improvements in conversion rate and average
+                  order value can transform your website or Shopify store
+                  revenue.
+                </p>
+                <div className="mt-6">
+                  <Button asChild size="lg">
+                    <Link href="/roi-calculator">Calculate My Revenue</Link>
+                  </Button>
+                </div>
+              </Card>
+            </AnimateIn>
 
-            <Card className="flex flex-col items-center p-8 text-center sm:p-10">
-              <Badge variant="brand" className="mb-4">
-                Free Guide
-              </Badge>
-              <h2 className="text-2xl font-bold text-ink">
-                Free Dropshipping Guide
-              </h2>
-              <p className="mt-3 text-sm text-muted">
-                A short, practical walkthrough of Shopify dropshipping —
-                what it is, the 5-step process, and what it actually takes
-                to succeed. Sent straight to your inbox.
-              </p>
-              <div className="mt-6">
-                <Button asChild size="lg">
-                  <Link href="/free-guide">Get the Free Guide</Link>
-                </Button>
-              </div>
-            </Card>
+            <AnimateIn delay={160}>
+              <Card hover className="flex h-full flex-col items-center p-8 text-center sm:p-10">
+                <Badge variant="brand" className="mb-4">
+                  Free Guide
+                </Badge>
+                <h2 className="text-2xl font-bold text-ink">
+                  Free Dropshipping Guide
+                </h2>
+                <p className="mt-3 text-sm text-muted">
+                  A short, practical walkthrough of Shopify dropshipping —
+                  what it is, the 5-step process, and what it actually takes
+                  to succeed. Sent straight to your inbox.
+                </p>
+                <div className="mt-6">
+                  <Button asChild size="lg">
+                    <Link href="/free-guide">Get the Free Guide</Link>
+                  </Button>
+                </div>
+              </Card>
+            </AnimateIn>
           </div>
         </div>
       </section>

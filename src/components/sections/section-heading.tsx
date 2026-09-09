@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { AnimateIn } from "@/components/animate-in";
 
 export function SectionHeading({
   eyebrow,
@@ -15,7 +16,7 @@ export function SectionHeading({
   className?: string;
 }) {
   return (
-    <div
+    <AnimateIn
       className={cn(
         "max-w-2xl",
         align === "center" && "mx-auto text-center",
@@ -35,6 +36,6 @@ export function SectionHeading({
           {description}
         </p>
       )}
-    </div>
+    </AnimateIn>
   );
 }

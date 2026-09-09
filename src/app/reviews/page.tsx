@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Star, BadgeCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { AnimateIn } from "@/components/animate-in";
 import { ReviewForm } from "@/components/review-form";
 import { getApprovedReviews } from "@/lib/reviews";
 
@@ -34,31 +35,33 @@ export default function ReviewsPage() {
         <div className="container-page">
           {reviews.length > 0 ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {reviews.map((review) => (
-                <Card key={review.slug} className="flex flex-col p-6">
-                  <div className="flex gap-0.5 text-accent">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-ink">
-                    &ldquo;{review.quote}&rdquo;
-                  </p>
-                  <div className="mt-5">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold text-ink">{review.name}</p>
-                      <span
-                        className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
-                        title="Submitted and approved as a genuine client review"
-                      >
-                        <BadgeCheck className="h-3 w-3" /> Verified
-                      </span>
+              {reviews.map((review, i) => (
+                <AnimateIn key={review.slug} delay={(i % 6) * 80}>
+                  <Card hover className="flex h-full flex-col p-6">
+                    <div className="flex gap-0.5 text-accent">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-current" />
+                      ))}
                     </div>
-                    {review.company && (
-                      <p className="text-xs text-muted">{review.company}</p>
-                    )}
-                  </div>
-                </Card>
+                    <p className="mt-4 text-sm leading-relaxed text-ink">
+                      &ldquo;{review.quote}&rdquo;
+                    </p>
+                    <div className="mt-5">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-semibold text-ink">{review.name}</p>
+                        <span
+                          className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
+                          title="Submitted and approved as a genuine client review"
+                        >
+                          <BadgeCheck className="h-3 w-3" /> Verified
+                        </span>
+                      </div>
+                      {review.company && (
+                        <p className="text-xs text-muted">{review.company}</p>
+                      )}
+                    </div>
+                  </Card>
+                </AnimateIn>
               ))}
             </div>
           ) : (

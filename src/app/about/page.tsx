@@ -4,6 +4,7 @@ import { Star, Globe2, Award, Target, ShieldCheck, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AnimateIn } from "@/components/animate-in";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { siteConfig } from "@/lib/site-config";
@@ -111,12 +112,14 @@ export default function AboutPage() {
 
       <section className="py-16">
         <div className="container-page grid gap-5 sm:grid-cols-3">
-          {trackRecord.map((stat) => (
-            <Card key={stat.label} className="flex flex-col items-center gap-2 p-8 text-center">
-              <stat.icon className="h-7 w-7 text-brand" />
-              <p className="text-3xl font-bold text-ink">{stat.value}</p>
-              <p className="text-sm text-muted">{stat.label}</p>
-            </Card>
+          {trackRecord.map((stat, i) => (
+            <AnimateIn key={stat.label} delay={i * 80}>
+              <Card hover className="flex flex-col items-center gap-2 p-8 text-center">
+                <stat.icon className="h-7 w-7 text-brand" />
+                <p className="text-3xl font-bold text-ink">{stat.value}</p>
+                <p className="text-sm text-muted">{stat.label}</p>
+              </Card>
+            </AnimateIn>
           ))}
         </div>
       </section>
@@ -129,18 +132,20 @@ export default function AboutPage() {
             description="A great website is more than design — it's a growth engine. Every project is built around three core principles."
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            {principles.map((p) => (
-              <Card key={p.title} className="p-6">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                  <p.icon className="h-5 w-5 text-brand" />
-                </div>
-                <h3 className="mt-4 text-base font-semibold text-ink">
-                  {p.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {p.description}
-                </p>
-              </Card>
+            {principles.map((p, i) => (
+              <AnimateIn key={p.title} delay={i * 80}>
+                <Card hover className="h-full p-6">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+                    <p.icon className="h-5 w-5 text-brand" />
+                  </div>
+                  <h3 className="mt-4 text-base font-semibold text-ink">
+                    {p.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {p.description}
+                  </p>
+                </Card>
+              </AnimateIn>
             ))}
           </div>
         </div>
@@ -154,16 +159,18 @@ export default function AboutPage() {
             description="From first call to launch day, here's what working together looks like."
           />
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {process.map((p) => (
-              <Card key={p.step} className="p-6">
-                <span className="text-sm font-bold text-brand">{p.step}</span>
-                <h3 className="mt-2 text-base font-semibold text-ink">
-                  {p.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {p.description}
-                </p>
-              </Card>
+            {process.map((p, i) => (
+              <AnimateIn key={p.step} delay={i * 80}>
+                <Card hover className="h-full p-6">
+                  <span className="text-sm font-bold text-brand">{p.step}</span>
+                  <h3 className="mt-2 text-base font-semibold text-ink">
+                    {p.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {p.description}
+                  </p>
+                </Card>
+              </AnimateIn>
             ))}
           </div>
         </div>

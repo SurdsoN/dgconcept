@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AnimateIn } from "@/components/animate-in";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { getAllCaseStudies, getCaseStudyCategories } from "@/lib/case-studies";
 import { siteConfig } from "@/lib/site-config";
@@ -74,10 +75,10 @@ export default async function CaseStudiesPage({
           )}
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((project) => {
+            {filtered.map((project, i) => {
               const href = project.liveUrl ?? project.flickrUrl;
               const card = (
-                <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+                <Card hover className="h-full overflow-hidden">
                   <div className="relative h-44 w-full">
                     <Image
                       src={project.images[0]}
@@ -101,12 +102,16 @@ export default async function CaseStudiesPage({
                 </Card>
               );
 
-              return href ? (
-                <a key={project.slug} href={href} target="_blank" rel="noopener noreferrer">
-                  {card}
-                </a>
-              ) : (
-                <div key={project.slug}>{card}</div>
+              return (
+                <AnimateIn key={project.slug} delay={(i % 6) * 80}>
+                  {href ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </AnimateIn>
               );
             })}
           </div>
